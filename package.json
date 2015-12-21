@@ -1,0 +1,30 @@
+{
+  "author": "Matt Oliver <mjo2089@gmail.com>",
+  "name": "jod",
+  "description": "JOliverDecor Site",
+  "version": "0.0.0",
+  "repository": {
+    "url": ""
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "babel-polyfill": "^6.3.13",
+    "babel-preset-es2015": "^6.3.13",
+    "babel-preset-react": "^6.3.13",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
+    "director": "^1.2.8",
+    "gulp": "^3.9.0",
+    "gulp-sourcemaps": "^1.6.0",
+    "react": "^0.14.3",
+    "react-dom": "^0.14.3",
+    "tsify": "^0.13.1",
+    "vinyl-source-stream": "^1.1.0",
+    "materialize-css": "^0.97.4",
+    "jquery": "^2.1.4"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
