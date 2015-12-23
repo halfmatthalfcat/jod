@@ -2,5 +2,6 @@
 **/*.log
 node_modules
 release
+typings
 !gulpfile.js
-config.json
+**/config.json

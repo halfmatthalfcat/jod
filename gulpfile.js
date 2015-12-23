@@ -3,6 +3,8 @@ var browserify = require('browserify');
 var tsify = require('tsify');
 var babelify = require('babelify');
 var source = require('vinyl-source-stream');
+var gTypescript = require('gulp-typescript');
+var gBabel = require('gulp-babel');
 
 var config = {
 
@@ -27,14 +29,13 @@ gulp.task('buildFrontend', function(){
 });
 
 gulp.task('buildBackend', function(){
-    browserify({debug: true})
-        .add(config.app.backend)
-        .plugin(tsify, { target: 'es6' })
-        .transform(babelify.configure({
-            presets: ['es2015'],
-            extentions: ['.ts', '.js']
+
+    var project = gTypescript.createProject('./tsconfig.json');
+
+    return gulp.src('backend/server.ts')
+        .pipe(gTypescript(project))
+        .pipe(gBabel({
+            plugins: ['transform-es2015-modules-commonjs']
         }))
-        .bundle()
-        .pipe(source('server.js'))
         .pipe(gulp.dest('release/'));
 });
