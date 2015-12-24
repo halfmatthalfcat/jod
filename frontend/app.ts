@@ -47,7 +47,7 @@ class App extends React.Component<IAppProps, IAppState>{
 }
 
 function render(){
-    React.render(
+    ReactDOM.render(
         React.createElement(
             App, null    
         ),

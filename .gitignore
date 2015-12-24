@@ -3,5 +3,8 @@
 node_modules
 release
 typings
+!typings/materialize
 !gulpfile.js
 **/config.json
+**/*.*.swp
+**/*.*.swo

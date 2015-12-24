@@ -1,7 +1,10 @@
+/// <reference path="../../typings/tsd.d.ts" />
 /// <reference path="./components.d.ts" />
 /// <reference path="../models/models.d.ts" />
 
 import { User } from '../models/user';
+import { Login } from './login';
+import * as $ from 'jquery';
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
 
@@ -12,7 +15,11 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
     }
 
     public componentDidMount(){
-        
+        $(() => {
+            $(".loginModal").leanModal({
+                dismissable: true
+            });
+        });
     }
 
     public render(){
@@ -27,7 +34,8 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
                         'Logo'
                     ),
                     this.buildButtons()
-                )
+                ),
+                React.createElement(Login, {})       
             ) 
         );
     }
@@ -75,11 +83,11 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
                     React.DOM.li(
                         null,
                         React.DOM.a(
-                            {'href': '#/login'},
+                            {'href': '#loginModal', 'className': 'modal-action modal-close waves-effect waves-green btn-flat'},
                             'Login'
                         )
                     )
-                )       
+                )
             ); 
         }
     
