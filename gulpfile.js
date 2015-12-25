@@ -25,7 +25,7 @@ gulp.task('buildFrontend', function(){
         }))
         .bundle()
         .pipe(source('app.js'))
-        .pipe(gulp.dest('release/'));
+        .pipe(gulp.dest('release/public/'));
 });
 
 gulp.task('buildBackend', function(){

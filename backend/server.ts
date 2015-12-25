@@ -11,7 +11,7 @@ class Server {
     constructor(){
         this.getConfig().then( (config) => {
             this.getDb(config).then( (db) => {
-                this.configRoutes(db).then( (app) => {
+                this.configRoutes(config, db).then( (app) => {
                     app.listen(3000);
                 }, (rejection) => console.log(rejection))
             }, (rejection) => console.log(rejection))
@@ -56,14 +56,47 @@ class Server {
         });
     }
 
-    private configRoutes(db: any): any {
-        console.log("In configRoutes");
+    private configRoutes(config: any, db: any): any {
         return new Promise( (resolve, reject) => {
-            console.log("Before creating express");
             var app = express();
-            console.log("Successfully created Express");
+            app.set('view engine', 'jade');
             app.use( BodyParser.json() );
-            console.log("Successfully added BodyParser");
+            app.use(express.static('public'));            
+            app.use(express.static('../node_modules'));
+
+            app.get('/', (req, res) => {
+                res.render('index');
+            });
+
+            app.post('/login', (req, res) => {
+                db.getConnection( (err, conn) => {
+                    if(err) return res.status(503).send("Couldn't establish db connection: " + err);
+                    else {
+                        try{
+                            conn.query(
+                                'SELECT * '+
+                                'FROM accounts ' +
+                                'WHERE email LIKE ? ' +
+                                'AND password LIKE ?',
+                                [req.body.email, req.body.password],
+                                (err, rows) => {
+                                    if(err) return res.status(503).send("Query error occured: " + err);
+                                    else if(rows[0]){
+                                        var user = rows[0];
+                                        user.password = '';
+                                        return res.send(JSON.stringify(user));
+                                    } else {
+                                        console.log("Invalid login attempt from: " + req.body.email);
+                                        return res.sendStatus(400);
+                                    }
+                                }      
+                            );
+                        } finally {
+                            conn.release();
+                        }
+                    }
+                });
+            });
 
             /* GET ACCOUNTS */
             app.get('/api/accounts', (req, res) => {
@@ -75,7 +108,7 @@ class Server {
                                 'SELECT accountId, accountName ' +
                                 'FROM accounts',
                                 (err, rows) => {
-                                    if(err) res.status(503).body("Query error occured: " + err);
+                                    if(err) res.status(503).send("Query error occured: " + err);
                                     else res.send(JSON.stringify(rows));
                             });
                         } finally {
@@ -88,7 +121,7 @@ class Server {
             app.route('/api/account')
                 .post( (req, res) => {
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else {
                             try {
                                 conn.query(
@@ -96,7 +129,7 @@ class Server {
                                     'SET ? ',
                                     req.body,
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else if (rows.insertId >= 0) res.send(201);
                                     }    
                                 );
@@ -110,7 +143,7 @@ class Server {
             app.route('/api/account/:accountId')
                 .get( (req, res) => {
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else {
                             try {
                                 conn.query(
@@ -119,7 +152,7 @@ class Server {
                                     'WHERE accountId = ?',
                                     req.params.accountId,
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else {
                                             rows.map( (val) => {
                                                 val.password = ''
@@ -136,7 +169,7 @@ class Server {
                 })
                 .put( (req, res) => {
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else {
                             try{
                                 conn.query(
@@ -145,7 +178,7 @@ class Server {
                                     'WHERE accountId = ?',
                                     [ req.body, req.params.accountId ],
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else if(rows.affectedRows == 1) res.send(203);
                                     }
                                 );
@@ -161,7 +194,7 @@ class Server {
             app.route('/api/item')
                 .post( (req, res) => {
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else{
                             try{
                                 conn.query(
@@ -170,7 +203,7 @@ class Server {
                                     'WHERE accountId = ?',
                                     [req.body, req.params.accountId],
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else if(rows.insertId >= 0) res.send(201);
                                     }    
                                 );
@@ -184,7 +217,7 @@ class Server {
             app.route('/api/items/:accountId')
                .get( (req, res) => { 
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else {
                             try {
                                 conn.query(
@@ -193,7 +226,7 @@ class Server {
                                     'WHERE accountId = ?',
                                     req.params.accountId,
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else res.send(JSON.stringify(rows));
                                     }
                                 );
@@ -207,7 +240,7 @@ class Server {
             app.route('/api/item/:itemId')
                 .put( (req, res) => {
                     db.getConnection( (err, conn) => {
-                        if(err) res.status(503).body("Couldn't establish db connection: " + err);
+                        if(err) res.status(503).send("Couldn't establish db connection: " + err);
                         else {
                             try {
                                 conn.query(
@@ -216,7 +249,7 @@ class Server {
                                     'WHERE budgetItemId = ?',
                                     [req.body, req.params.itemId],
                                     (err, rows) => {
-                                        if(err) res.status(503).body("Query error occured: " + err);
+                                        if(err) res.status(503).send("Query error occured: " + err);
                                         else if(rows.affectedRows == 1) res.send(203);
                                     }
                                 );

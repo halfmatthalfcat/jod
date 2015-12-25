@@ -4,7 +4,6 @@
 
 import { User } from '../models/user';
 import { Login } from './login';
-import * as $ from 'jquery';
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
 
@@ -15,10 +14,12 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
     }
 
     public componentDidMount(){
+        //on doc ready
         $(() => {
-            $(".loginModal").leanModal({
+            $(".modal-trigger").leanModal({
                 dismissable: true
             });
+            console.log("Modal set");
         });
     }
 
@@ -30,12 +31,11 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
                 React.DOM.div(
                     {'className': 'nav-wrapper'},
                     React.DOM.a(
-                        {'href': '#', 'className': 'center brand-logo'},
-                        'Logo'
+                        {'href': '#', 'className': 'center brand-logo logo'},
+                        'JOLiver Decor | Interior Decorator'
                     ),
                     this.buildButtons()
-                ),
-                React.createElement(Login, {})       
+                )
             ) 
         );
     }
@@ -83,7 +83,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
                     React.DOM.li(
                         null,
                         React.DOM.a(
-                            {'href': '#loginModal', 'className': 'modal-action modal-close waves-effect waves-green btn-flat'},
+                            {'href': '#loginModal', 'className': 'waves-effect waves-light btn modal-trigger'},
                             'Login'
                         )
                     )

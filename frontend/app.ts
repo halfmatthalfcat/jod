@@ -4,6 +4,7 @@
 import 'babel-polyfill';
 import { User } from './models/user';
 import { Toolbar } from './components/toolbar';
+import { Login } from './components/login';
 
 declare var Router;
 
@@ -40,7 +41,8 @@ class App extends React.Component<IAppProps, IAppState>{
         return(
             React.DOM.div(
                 {'className': 'container'}, 
-                React.createElement(Toolbar, {user: this.state.user})
+                React.createElement(Toolbar, {user: this.state.user}), 
+                React.createElement(Login, {})       
             )
         );
     }
