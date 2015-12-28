@@ -5,6 +5,8 @@ import 'babel-polyfill';
 import { User } from './models/user';
 import { Toolbar } from './components/toolbar';
 import { Login } from './components/login';
+import { Home } from './pages/home';
+import { Accounts } from './pages/accounts';
 
 declare var Router;
 
@@ -15,8 +17,9 @@ class App extends React.Component<IAppProps, IAppState>{
     constructor(props: IAppProps){
         super(props);
         this.state = {
-            user: null
+            page: Home
         };
+        this.setUser = this.setUser.bind(this);
     }
     
     public componentDidMount(){
@@ -24,17 +27,33 @@ class App extends React.Component<IAppProps, IAppState>{
         var setState = this.setState;
 
         var router = Router({
-            '/': setState.bind(this, {}),
-            '/admin': setState.bind(this, {})
-        });
-
-        router.configure({
-            on: function(){
-                console.log(window.location.hash.slice(2));
+            '/': {
+                '/account': {
+                    '/:accountId': {
+                    },
+                    on: (next) => { this.setState({page: Accounts}); console.log("At account"); }
+                }, 
+                on: (next) => { 
+                    if(this.state.user) { next(); console.log("Proceeding"); } 
+                    else {
+                        next(false); 
+                        document.location.href='/#/'; 
+                        console.log("User not found: " + JSON.stringify(this.state.user)); 
+                    }
+                }
             }
         });
 
+        router.configure({ 
+            async: true,
+            recurse: 'forward', 
+            notfound: () => { document.location.href='/#/'; } });
+
         router.init('/');
+    }
+
+    public setUser = (user: User) => {
+        this.setState({ user: user, page: this.state.page });
     }
 
     public render(){
@@ -42,7 +61,8 @@ class App extends React.Component<IAppProps, IAppState>{
             React.DOM.div(
                 {'className': 'container'}, 
                 React.createElement(Toolbar, {user: this.state.user}), 
-                React.createElement(Login, {})       
+                React.createElement(Login, {setUser: this.setUser}),
+                React.createElement(this.state.page, null)       
             )
         );
     }

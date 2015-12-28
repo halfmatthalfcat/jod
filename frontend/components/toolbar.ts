@@ -32,7 +32,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
                     {'className': 'nav-wrapper'},
                     React.DOM.a(
                         {'href': '#', 'className': 'center brand-logo logo'},
-                        'JOLiver Decor | Interior Decorator'
+                        'JOLiver Decor'
                     ),
                     this.buildButtons()
                 )
@@ -45,33 +45,36 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
     
         if(this.isLoggedIn()){
             return(
-                React.DOM.ul(
-                    {'className': 'right'},
-                    React.DOM.li(
-                        null,
-                        React.DOM.div(
+                React.DOM.div(
+                    null,
+                    React.DOM.ul(
+                        {'className': 'right'},
+                        React.DOM.li(
                             null,
-                            "Welcome, " + this.props.user.username
+                            React.DOM.a(
+                                {'href': '#/logout'},
+                                'Logout'
+                            )
                         )
-                    )
-                ),
-                React.DOM.ul(
-                    {'className': 'right'},
-                    React.DOM.li(
-                        null,
-                        React.DOM.a(
-                            {'href': '#/accounts'},
-                            'Accounts'
+                    ),
+                    React.DOM.ul(
+                        {'className': 'right'},
+                        React.DOM.li(
+                            null,
+                            React.DOM.a(
+                                {'href': '#/accounts'},
+                                'Accounts'
+                            )
                         )
-                    )
-                ),
-                React.DOM.ul(
-                    {'className': 'right'},
-                    React.DOM.li(
-                        null,
-                        React.DOM.a(
-                            {'href': '#/logout'},
-                            'Logout'
+                    ),
+                    React.DOM.ul(
+                        {'className': 'right'},
+                        React.DOM.li(
+                            null,
+                            React.DOM.div(
+                                {'className': 'username'},
+                                "Welcome, " + this.props.user.username
+                            )
                         )
                     )
                 )

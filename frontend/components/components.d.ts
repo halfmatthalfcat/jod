@@ -1,7 +1,9 @@
 interface IToolbarProps { user?: IUser; }
 interface IToolbarState {}
 
-interface ILoginProps {}
+interface ILoginProps {
+    setUser: (user: IUser) => void;
+}
 interface ILoginState {
     loading: boolean;
 }

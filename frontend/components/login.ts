@@ -1,5 +1,8 @@
 /// <reference path="./components.d.ts" />
+/// <reference path="../models/models.d.ts" />
 /// <reference path="../../typings/tsd.d.ts" />
+
+import { User } from '../models/user';
 
 class Login extends React.Component<ILoginProps, ILoginState>{
 
@@ -30,15 +33,21 @@ class Login extends React.Component<ILoginProps, ILoginState>{
     private tryLogin(){
         this.setState({loading: true});
         console.log("Sending: " + JSON.stringify(this.getLoginData()));
-        $.post(
-            "http://joliverdecor.com:3000/login",
-            JSON.stringify(this.getLoginData()),
-            (data, stat, jqxhr) => {
-                this.setState({loading: false});
-                console.log(data);        
-            },
-            'json'
-        );
+        $.ajax({
+            contentType: 'application/json',
+            data: JSON.stringify(this.getLoginData()),
+            type: 'POST',
+            url: '/login',
+            statusCode: {
+                400: () => { $('#modalMessage').text("Invalid login credentials"); this.setState({loading: false}); },
+                200: (data) => {
+                    var user = $.parseJSON(data); 
+                    this.props.setUser(new User(user.accountName, user.email)); 
+                    this.setState({loading: false});
+                    $("#loginModal").closeModal();
+                }
+            }
+        });
     }
 
     public render(){
@@ -108,11 +117,17 @@ class Login extends React.Component<ILoginProps, ILoginState>{
         }
         else{ 
             return(
-                React.DOM.a(
-                    {'className': 'modal-action waves-effect waves-green btn-flat', 'href': '#!', 'id': 'login'},
-                    "Login"
-                )        
-            );
+                React.DOM.div(
+                    null,
+                    React.DOM.div(
+                        {'id': 'modalMessage'}    
+                    ),
+                    React.DOM.a(
+                        {'className': 'modal-action waves-effect waves-green btn-flat', 'href': '#!', 'id': 'login'},
+                        "Login"        
+                    )
+                )
+            )
         }
     }
 
