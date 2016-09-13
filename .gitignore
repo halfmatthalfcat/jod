@@ -11,3 +11,4 @@ typings
 **/config.json
 **/*.*.swp
 **/*.*.swo
+.idea
