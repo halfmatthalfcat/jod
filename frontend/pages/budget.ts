@@ -3,25 +3,25 @@
 
 import * as React from 'react';
 
-class Home extends React.Component<IHomeProps, IHomeState>{
+class Budget extends React.Component<IBudgetProps, IBudgetState>{
 
-    public state: IHomeState;
+    public state: IBudgetState;
 
-    constructor(props: IHomeProps){
+    constructor(props: IBudgetProps){
         super(props);
         this.state = {}
     }
 
     public componentDidMount(){
-        
+
     }
 
     public render(){
         return(
-            React.DOM.div(null, "Home")        
+            React.DOM.div(null, "Budget")
         );
     }
 
 }
 
-export { Home };
+export { Budget };

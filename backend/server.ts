@@ -1,4 +1,4 @@
-/// <reference path="../typings/tsd.d.ts" />
+/// <reference path="../typings/index.d.ts" />
 
 import 'babel-polyfill';
 var express = require('express');
@@ -62,7 +62,7 @@ class Server {
             app.set('view engine', 'jade');
             app.use( BodyParser.json() );
             app.use(express.static('public'));            
-            app.use(express.static('../node_modules'));
+            app.use(express.static('node_modules'));
 
             app.get('/', (req, res) => {
                 res.render('index');

@@ -1,4 +1,4 @@
-/// <reference path="../jquery/jquery.d.ts" />
+/// <reference path="../../globals/jquery/index.d.ts" />
 
 
 interface JQuery {

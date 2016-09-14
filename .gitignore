@@ -1,14 +1,7 @@
 **/*.js
-**/*.log
+**/*.js.map
+!frontend/webpack.config.js
+!backend/gulpfile.js
 node_modules
-release
-!release/views
-!release/public/index.html
-!release/public/main.css
 typings
-!typings/materialize
-!gulpfile.js
-**/config.json
-**/*.*.swp
-**/*.*.swo
 .idea

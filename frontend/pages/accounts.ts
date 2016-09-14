@@ -1,5 +1,7 @@
 /// <reference path="./pages.d.ts" />
-/// <reference path="../../typings/tsd.d.ts" />
+/// <reference path="../../typings/index.d.ts" />
+
+import * as React from 'react';
 
 class Accounts extends React.Component<IAccountsProps, IAccountsState>{
 

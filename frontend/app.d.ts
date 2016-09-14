@@ -1,6 +1,5 @@
-interface IAppProps {}
+export interface IAppProps {}
 
-interface IAppState{
-    user?: IUser,
-    page: React.ComponentClass<any> 
+export interface IAppState {
+    user?: IUser
 }

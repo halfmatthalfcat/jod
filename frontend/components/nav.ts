@@ -3,11 +3,11 @@
 
 import * as React from 'react';
 
-class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
+class Nav extends React.Component<INavProps, INavState>{
 
-    public state: IToolbarState;
+    public state: INavState;
 
-    constructor(props: IToolbarProps){
+    constructor(props: INavProps){
         super(props);
         this.state = {}
     }
@@ -18,10 +18,10 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState>{
 
     public render(){
         return(
-            React.DOM.div(null, "Toolbar")
+            React.DOM.div(null, "Nav")
         );
     }
 
 }
 
-export { Toolbar };
+export { Nav };

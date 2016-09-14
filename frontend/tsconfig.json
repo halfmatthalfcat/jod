@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "jsx": "react",
+    "noImplicitAny": true
+  },
+  "filesGlob": [
+    "**/*.tsx",
+    "**/*.ts.d",
+    "**/*.ts"
+  ]
+}
