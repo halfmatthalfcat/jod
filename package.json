@@ -2,9 +2,9 @@
   "author": "Matt Oliver <mjo2089@gmail.com>",
   "name": "jod",
   "description": "JOliverDecor Site",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "repository": {
-    "url": ""
+    "url": "joliverdecor.com"
   },
   "dependencies": {
     "react-router": "^2.8.1",
@@ -12,7 +12,6 @@
     "director": "1.2.8",
     "express": "4.14.0",
     "express-session": "1.14.1",
-    "connect-redis": "3.1.0",
     "jade": "1.11.0",
     "jquery": "3.1.0",
     "materialize-css": "0.97.7",
