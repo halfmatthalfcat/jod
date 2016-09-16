@@ -1,0 +1,21 @@
+version: '2'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    links:
+      - mysql
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306"
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+      MYSQL_USER: jod
+      MYSQL_PASSWORD: jod
+      MYSQL_DATABASE: jod
+    volumes:
+      - ./sql:/docker-entrypoint-initdb.d

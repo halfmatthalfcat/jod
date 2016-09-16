@@ -1,43 +1,31 @@
 {
   "author": "Matt Oliver <mjo2089@gmail.com>",
-  "name": "jod",
-  "description": "JOliverDecor Site",
-  "version": "0.0.0",
+  "name": "jod-frontend",
+  "description": "JOliverDecor Frontend",
+  "version": "1.0.0",
   "repository": {
-    "url": ""
+    "url": "joliverdecor.com"
   },
   "dependencies": {
     "react-router": "^2.8.1",
     "body-parser": "1.15.2",
-    "director": "1.2.8",
-    "express": "4.14.0",
-    "express-session": "1.14.1",
-    "connect-redis": "3.1.0",
-    "jade": "1.11.0",
     "jquery": "3.1.0",
     "materialize-css": "0.97.7",
-    "mysql": "2.11.1",
     "react": "15.3.1",
     "react-dom": "15.3.1"
   },
   "devDependencies": {
     "babel-loader": "^6.2.5",
-    "babel-plugin-transform-es2015-modules-commonjs": "6.14.0",
     "babel-polyfill": "6.13.0",
     "babel-preset-es2015": "6.14.0",
     "babel-preset-react": "^6.11.1",
-    "gulp": "^3.9.1",
-    "gulp-babel": "^6.1.2",
-    "gulp-sourcemaps": "^1.6.0",
-    "gulp-typescript": "^2.13.6",
     "json-loader": "^0.5.4",
     "jsx-typescript": "^1.5.0-alpha.5",
     "ts-loader": "^0.8.2",
     "typescript": "^1.8.10",
-    "typescript-loader": "^1.1.3",
     "webpack": "^1.13.2"
   },
   "scripts": {
-    "build": "cd frontend && webpack && cd ../backend && gulp build"
+    "build": "sudo webpack"
   }
 }
