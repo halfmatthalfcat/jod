@@ -1,0 +1,7 @@
+node_modules
+typings
+sql
+**/*.js
+**/*.js.map
+!backend/gulpfile.js
+!frontend/webpack.config.js

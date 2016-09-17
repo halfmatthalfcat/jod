@@ -5,6 +5,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 CREATE TABLE Tags(
   BudgetItemId INT NOT NULL,
   TagId INT NOT NULL,
+  PRIMARY KEY(BudgetItemId, TagId),
   FOREIGN KEY(BudgetItemId)
     REFERENCES BudgetItem(BudgetItemId)
     ON UPDATE CASCADE

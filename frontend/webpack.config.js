@@ -9,8 +9,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      { test: /\.tsx?$/, loader: 'babel-loader!ts-loader' },
-      { test: /\.json$/, loader: 'json-loader' }
+      {test: /\.tsx?$/, loader: 'babel-loader!ts-loader'},
+      {test: /\.json$/, loader: 'json-loader'}
     ]
   },
   externals: {

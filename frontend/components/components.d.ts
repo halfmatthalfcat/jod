@@ -1,10 +1,14 @@
-interface IToolbarProps { user?: IUser; }
-interface IToolbarState {}
+interface IToolbarProps { user?: IUser;
+}
+interface IToolbarState {
+}
 
 interface ILoginProps {
 }
 interface ILoginState {
 }
 
-interface INavProps {}
-interface INavState {}
+interface INavProps {
+}
+interface INavState {
+}

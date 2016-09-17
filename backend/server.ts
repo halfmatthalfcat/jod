@@ -12,7 +12,9 @@ class Server {
         this.getConfig().then( (config) => {
             this.getDb(config).then( (db) => {
                 this.configRoutes(config, db).then( (app) => {
-                    app.listen(3000);
+                    const server = app.listen(3000, () => {
+                      console.log("Listening at %s on port %d", server.address().address, server.address().port)
+                    });
                 }, (rejection) => console.log(rejection))
             }, (rejection) => console.log(rejection))
         }, (rejection) => console.log(rejection));    
@@ -64,7 +66,7 @@ class Server {
             app.use(express.static('public'));            
             app.use(express.static('node_modules'));
 
-            app.get('/', (req, res) => {
+            app.get('*', (req, res) => {
                 res.render('index');
             });
 
