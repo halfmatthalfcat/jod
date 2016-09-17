@@ -1,6 +1,8 @@
-interface IToolbarProps { user?: IUser;
+interface IToolbarProps {
 }
 interface IToolbarState {
+  user?: IUser;
+  loggedIn: Boolean;
 }
 
 interface ILoginProps {
