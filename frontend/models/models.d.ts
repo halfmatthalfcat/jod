@@ -1,32 +1,26 @@
 interface IAccount {
 
-  accountId?: string,
-  accountName: string,
-  password: string,
-  firstName?: string,
-  lastName?: string,
-  streetNumber?: number,
-  streetName?: string,
-  city?: string,
-  state?: string,
-  zipCode?: number,
-  homePhone?: string,
-  cellPhone?: string,
-  email: string,
-  notes?: string
+  accountId?: number,
+  userId: number,
+  accountName: string
 
+}
+
+interface IBudget {
+  budgetId?: number,
+  accountId: number,
+  budgetName: string,
+  created: string
 }
 
 interface IBudgetItem {
 
-  budgetItemId?: string,
-  accountId: string,
-  date: string,
-  quantity: number,
+  budgetItemId?: number,
+  budgetId: number,
+  created: string,
   description: string,
-  unitPrice: number,
   totalPrice: number,
-  purpose: string
+  notes: string
 
 }
 
@@ -36,4 +30,20 @@ interface IUser {
   username: string
   userId?: number
 
+}
+
+interface IUserInfo {
+  userId?: number;
+  phone?: string;
+  address1?: string;
+  address2?: string;
+  city?: string;
+  state?: string;
+  zipCode?: number;
+}
+
+interface ITag {
+  tagId?: number;
+  tagName: string;
+  tagColor: string;
 }

@@ -1,12 +1,16 @@
 import * as $ from 'jquery';
 
 export function isNullOrEmpty(o: any): Boolean {
-  return o === undefined || o === null || o === "";
+  try {
+    return o === undefined || o === null || o === "";
+  } catch(ex) {
+    return true;
+  }
 }
 
 export module Ajax {
-  function buildParams(params: Map<String, String>): String {
-    if(params.keys.length > 0) {
+  function buildParams(params?: Map<String, String>): String {
+    if(!isNullOrEmpty(params)) {
       var paramString = "?";
       params.forEach((key, value) => {
         paramString = paramString + `${key}=${value}&`

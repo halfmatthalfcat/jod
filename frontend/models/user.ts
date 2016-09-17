@@ -15,7 +15,7 @@ class User implements IUser {
     this.email = email;
     if(userId){
       this.userId = userId
-    } else this.userId = undefined;
+    }
   }
 
 }
