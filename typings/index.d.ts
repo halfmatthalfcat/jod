@@ -12,6 +12,7 @@
 /// <reference path="globals/react-global/index.d.ts" />
 /// <reference path="globals/react/index.d.ts" />
 /// <reference path="modules/body-parser/index.d.ts" />
+/// <reference path="modules/express/index.d.ts" />
 /// <reference path="modules/history/index.d.ts" />
 /// <reference path="modules/materialize/materialize.d.ts" />
 /// <reference path="modules/mime/index.d.ts" />

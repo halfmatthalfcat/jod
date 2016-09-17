@@ -1,4 +1,4 @@
-import { Ajax } from './Helpers';
+import { Ajax } from './helpers';
 
 export module User {
   export function getUser(userId: number): JQueryPromise<IUser> {

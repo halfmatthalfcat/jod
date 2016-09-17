@@ -3,7 +3,7 @@
 
 import * as React from 'react';
 import {Link} from "react-router";
-import {isNullOrEmpty} from '../util/Helpers';
+import {isNullOrEmpty} from '../util/helpers';
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
