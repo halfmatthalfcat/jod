@@ -11,7 +11,7 @@ CREATE TABLE UserInfo(
   State VARCHAR(2),
   ZipCode INT,
   PRIMARY KEY(UserId),
-  FOREIGN KEY(UserId),
+  FOREIGN KEY(UserId)
     REFERENCES `User`(UserId)
     ON UPDATE CASCADE
     ON DELETE CASCADE

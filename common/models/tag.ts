@@ -1,5 +1,7 @@
 /// <reference path="./models.d.ts" />
 
+import {ITag} from "./models";
+
 class Tag implements ITag {
 
   tagId: number;
@@ -11,7 +13,7 @@ class Tag implements ITag {
     tagColor: string,
     tagId?: number
   ) {
-    if(tagId) this.tagId = tagId;
+    if (tagId) this.tagId = tagId;
     this.tagName = tagName;
     this.tagColor = tagColor;
   }

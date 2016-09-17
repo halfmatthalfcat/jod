@@ -7,6 +7,8 @@
   "filesGlob": [
     "**/*.tsx",
     "**/*.ts.d",
-    "**/*.ts"
+    "**/*.ts",
+    "../common/*.ts",
+    "../common/*.ts.d"
   ]
 }

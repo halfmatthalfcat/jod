@@ -1,7 +1,7 @@
 /// <reference path="./pages.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
 
 class Account extends React.Component<IAccountProps, IAccountState> {
 
@@ -9,7 +9,7 @@ class Account extends React.Component<IAccountProps, IAccountState> {
 
   constructor(props: IAccountProps) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   public componentDidMount() {

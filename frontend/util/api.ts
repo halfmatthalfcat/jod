@@ -1,6 +1,7 @@
-import { Ajax } from './helpers';
+import { Ajax } from "./helpers";
+import {IUser, IUserInfo, IAccount, IBudget, IBudgetItem, ITag} from "../../common/models/models";
 
-export module User {
+namespace User {
   export function getUser(userId: number): JQueryPromise<IUser> {
     return Ajax.get<IUser>(`/api/user/${userId}`);
   }
@@ -18,7 +19,7 @@ export module User {
   }
 }
 
-export module UserInfo {
+namespace UserInfo {
   export function getUserInfo(userId: number): JQueryPromise<IUserInfo> {
     return Ajax.get<IUserInfo>(`/api/user/${userId}/info`);
   }
@@ -33,7 +34,7 @@ export module UserInfo {
   }
 }
 
-export module Account {
+namespace Account {
   export function getAccount(accountId: number): JQueryPromise<IAccount> {
     return Ajax.get<IAccount>(`/api/account/${accountId}`);
   }
@@ -46,12 +47,15 @@ export module Account {
   export function deleteAccount(accountId: number): JQueryPromise<Boolean> {
     return Ajax.del(`/api/account/${accountId}`);
   }
+  export function getAllAccounts(): JQueryPromise<Array<IAccount>> {
+    return Ajax.get<Array<IAccount>>("/api/account/all");
+  }
   export function getAccountBudgets(accountId: number): JQueryPromise<Array<IBudget>> {
     return Ajax.get<Array<IBudget>>(`/api/account/${accountId}/budgets`);
   }
 }
 
-export module Budget {
+namespace Budget {
   export function getBudget(budgetId: number): JQueryPromise<IBudget> {
     return Ajax.get<IBudget>(`/api/budget/${budgetId}`);
   }
@@ -64,9 +68,12 @@ export module Budget {
   export function deleteBudget(budgetId: number): JQueryPromise<Boolean> {
     return Ajax.del(`/api/budget/${budgetId}`);
   }
+  export function getBudgetItems(budgetId: number): JQueryPromise<Array<IBudgetItem>> {
+    return Ajax.get<Array<IBudgetItem>>(`/api/budget/${budgetId}/items`);
+  }
 }
 
-export module BudgetItem {
+namespace BudgetItem {
   export function getBudgetItem(budgetItemId: number): JQueryPromise<IBudgetItem> {
     return Ajax.get<IBudgetItem>(`/api/budget/item/${budgetItemId}`);
   }
@@ -79,9 +86,15 @@ export module BudgetItem {
   export function deleteBudgetItem(budgetItemId: number): JQueryPromise<Boolean> {
     return Ajax.del(`/api/budget/item/${budgetItemId}`);
   }
+  export function addTagToBudgetItem(budgetItemId: number, tagId: number): JQueryPromise<IBudgetItem> {
+    return Ajax.get<IBudgetItem>(`/api/budget/item/${budgetItemId}/tag/${tagId}`);
+  }
+  export function removeTagFromBudgetItem(budgetItemId: number, tagId: number): JQueryPromise<Boolean> {
+    return Ajax.del(`/api/budget/item/${budgetItemId}/tag/${tagId}`);
+  }
 }
 
-export module Tag {
+namespace Tag {
   export function getTag(tagId: number): JQueryPromise<ITag> {
     return Ajax.get<ITag>(`/api/tag/${tagId}`);
   }
@@ -95,6 +108,6 @@ export module Tag {
     return Ajax.del(`/api/tag/${tagId}`);
   }
   export function getAllTags(): JQueryPromise<Array<ITag>> {
-    return Ajax.get<Array<ITag>>("/api/tags/all");
+    return Ajax.get<Array<ITag>>("/api/tag/all");
   }
 }

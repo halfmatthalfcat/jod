@@ -9,9 +9,6 @@
   "dependencies": {
     "body-parser": "1.15.2",
     "express": "4.14.0",
-    "express-session": "1.14.1",
-    "history": "^4.2.0",
-    "jade": "1.11.0",
     "jquery": "3.1.0",
     "materialize-css": "0.97.7",
     "mysql": "2.11.1",
@@ -28,15 +25,17 @@
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-tslint": "^6.1.1",
     "gulp-typescript": "^2.13.6",
     "json-loader": "^0.5.4",
     "jsx-typescript": "^1.5.0-alpha.5",
     "ts-loader": "^0.8.2",
+    "tslint": "^3.15.1",
     "typescript": "^1.8.10",
     "typescript-loader": "^1.1.3",
     "webpack": "^1.13.2"
   },
   "scripts": {
-    "build": "cd frontend && webpack && cd ../backend && gulp build"
+    "build": "cd backend && gulp build && cd ../frontend && webpack"
   }
 }

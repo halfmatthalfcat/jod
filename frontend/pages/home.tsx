@@ -1,7 +1,7 @@
 /// <reference path="./pages.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
 
 class Home extends React.Component<IHomeProps, IHomeState> {
 
@@ -9,7 +9,7 @@ class Home extends React.Component<IHomeProps, IHomeState> {
 
   constructor(props: IHomeProps) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   public componentDidMount() {

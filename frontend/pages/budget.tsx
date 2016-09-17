@@ -1,7 +1,7 @@
 /// <reference path="./pages.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
 
 class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
@@ -9,7 +9,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   constructor(props: IBudgetProps) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   public componentDidMount() {

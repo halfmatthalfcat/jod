@@ -1,3 +1,5 @@
+import {IUser} from "../../common/models/models";
+
 interface IToolbarProps {
 }
 interface IToolbarState {

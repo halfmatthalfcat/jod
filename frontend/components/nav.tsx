@@ -1,7 +1,8 @@
 /// <reference path="./components.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
+import {INavProps, INavState} from "./components";
 
 class Nav extends React.Component<INavProps, INavState> {
 

@@ -1,7 +1,8 @@
 /// <reference path="./components.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
+import {ILoginProps, ILoginState} from "./components";
 
 class Login extends React.Component<ILoginProps, ILoginState> {
 
@@ -9,7 +10,7 @@ class Login extends React.Component<ILoginProps, ILoginState> {
 
   constructor(props: ILoginProps) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   public componentDidMount() {

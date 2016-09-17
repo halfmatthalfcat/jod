@@ -1,5 +1,7 @@
 /// <reference path="./models.d.ts" />
 
+import {IBudget} from "./models";
+
 class Budget implements IBudget {
 
   budgetId: number;
@@ -16,7 +18,7 @@ class Budget implements IBudget {
     this.accountId = accountId;
     this.budgetName = budgetName;
     this.created = created;
-    if(budgetId) {
+    if (budgetId) {
       this.budgetId = budgetId;
     }
   }

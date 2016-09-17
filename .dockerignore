@@ -1,6 +1,7 @@
 node_modules
 typings
 sql
+out
 **/*.js
 **/*.js.map
 !backend/gulpfile.js

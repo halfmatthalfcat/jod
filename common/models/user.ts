@@ -1,6 +1,8 @@
 /// <reference path="./models.d.ts" />
 
-class User implements IUser {
+import {IUser} from "./models";
+
+export class User implements IUser {
 
   userId: number;
   username: string;
@@ -13,11 +15,9 @@ class User implements IUser {
   ) {
     this.username = username;
     this.email = email;
-    if(userId){
-      this.userId = userId
+    if (userId) {
+      this.userId = userId;
     }
   }
 
 }
-
-export {User} ;

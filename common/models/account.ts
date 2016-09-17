@@ -1,5 +1,7 @@
 /// <reference path="./models.d.ts" />
 
+import {IAccount} from "./models";
+
 class Account implements IAccount {
 
   accountId: number;

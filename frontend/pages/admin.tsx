@@ -1,7 +1,7 @@
 /// <reference path="./pages.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
 
 class Admin extends React.Component<IAdminProps, IAdminState> {
 
@@ -9,7 +9,7 @@ class Admin extends React.Component<IAdminProps, IAdminState> {
 
   constructor(props: IAdminProps) {
     super(props);
-    this.state = {}
+    this.state = {};
   }
 
   public componentDidMount() {

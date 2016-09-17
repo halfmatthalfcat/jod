@@ -1,18 +1,19 @@
-import {connection} from '../util/helpers';
+import {connection} from "../util/helpers";
 
 import {IPool} from "mysql";
-var express = require('express');
+import {Router} from "express";
 
-export module UserInfoRoutes {
-  var router = express.Router();
 
-  export default function routes(
+export namespace UserInfoRoutes {
+  const router = Router();
+
+  export function routes(
     db: IPool
-  ) {
+  ): Router {
     router.route("/api/user/info")
       .post((req, res) => {
         connection(db, res, (conn) => {
-          conn.query(
+          return conn.query(
             `
               INSERT INTO UserInfo
               (
@@ -37,20 +38,21 @@ export module UserInfoRoutes {
               req.body.zipCode
             ],
             (err, result) => {
-              if(err) throw err;
-              else if(result.resultId) {
-                conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [result.resultId], (err, result2) => {
-                  if(result2[0]) return res.json(result2[0]);
+              if (err) throw err;
+              else if (result.insertId) {
+                conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [result.insertId], (err, result2) => {
+                  if (err) throw err;
+                  else if (result2[0]) return res.json(result2[0]);
                   else return res.status(503).send("UserInfo not added");
                 });
               } else throw Error("UserInfo not added");
             }
-          )
-        })
+          );
+        });
       })
       .put((req, res) => {
         connection(db, res, (conn) => {
-          conn.query(
+          return conn.query(
             `
               UPDATE  UserInfo
               SET     Phone = ?,
@@ -71,23 +73,23 @@ export module UserInfoRoutes {
               req.body.userId
             ],
             (err, result) => {
-              if(err) throw err;
-              else if(result.affectedRows == 1) {
+              if (err) throw err;
+              else if (result.affectedRows === 1) {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
-                  if(err) throw err;
-                  else if(result2[0]) return res.json(result2[0]);
+                  if (err) throw err;
+                  else if (result2[0]) return res.json(result2[0]);
                   else return res.status(503).send("UserInfo not updated");
                 });
               }
             }
-          )
+          );
         });
       });
 
     router.route("/api/user/:userId/info")
       .get((req, res) => {
         connection(db, res, (conn) => {
-          conn.query(
+          return conn.query(
             `
               SELECT  *
               FROM    UserInfo
@@ -95,8 +97,8 @@ export module UserInfoRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if(err) throw err;
-              else if(result[0]) return res.json(result[0]);
+              if (err) throw err;
+              else if (result[0]) return res.json(result[0]);
               else return res.status(503).send("User does not exist.");
             }
           );
@@ -104,19 +106,20 @@ export module UserInfoRoutes {
       })
       .delete((req, res) => {
         connection(db, res, (conn) => {
-          conn.query(
+          return conn.query(
             `
               DELETE FROM UserInfo
               WHERE UserId = ?
             `,
             [req.params.userId],
             (err, result) => {
-              if(err) throw err;
-              else if(result.affectedRows == 1) return res.sendStatus(201);
+              if (err) throw err;
+              else if (result.affectedRows === 1) return res.sendStatus(200);
               else res.status(503).send("User does not exist.");
             }
           );
         });
       });
+    return router;
   }
 }

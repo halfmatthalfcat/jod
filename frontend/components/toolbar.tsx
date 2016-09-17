@@ -1,29 +1,30 @@
 /// <reference path="./components.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from 'react';
+import * as React from "react";
 import {Link} from "react-router";
-import {isNullOrEmpty} from '../util/helpers';
+import {isNullOrEmpty} from "../util/helpers";
+import {IToolbarProps, IToolbarState} from "./components";
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
   public state: IToolbarState;
 
   private containerStyle: any = {
-    display: 'flex',
-    flexFlow: 'column nowrap',
+    display: "flex",
+    flexFlow: "column nowrap",
   };
 
   constructor(props: IToolbarProps) {
     super(props);
     this.state = {
       loggedIn: false
-    }
+    };
   }
 
   public componentDidMount() {
-    if(!isNullOrEmpty(localStorage.getItem("jod_jwt"))){
-      var token = localStorage.getItem("jod_jwt");
+    if (!isNullOrEmpty(localStorage.getItem("jod_jwt"))){
+      const token = localStorage.getItem("jod_jwt");
 
     }
   }
@@ -36,7 +37,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
             <div className="nav-wrapper">
               <a href="#!" className="brand-logo center">JOliverDecor</a>
               {(() => {
-                if(this.state.loggedIn){
+                if (this.state.loggedIn) {
                   return(
                     <ul className="right hide-on-med-and-down">
                       <li><Link to="/accounts">Accounts</Link></li>

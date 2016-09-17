@@ -1,7 +1,7 @@
 module.exports = {
   entry: './app.tsx',
   output: {
-    path: "../public/",
+    path: "../backend/public/",
     filename: "app.js"
   },
   resolve: {
