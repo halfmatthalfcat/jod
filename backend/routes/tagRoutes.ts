@@ -28,7 +28,7 @@ export namespace TagRoutes {
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve Tag.");
                   });
-                } else return res.status(503).send("Couldn't add Tag.");
+                } else return res.status(500).send("Couldn't add Tag.");
               }
             );
           });
@@ -55,7 +55,7 @@ export namespace TagRoutes {
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve Tag.");
                   });
-                } else return res.status(503).send("Couldn't update Tag.");
+                } else return res.status(500).send("Couldn't update Tag.");
               }
             );
           });
@@ -84,7 +84,7 @@ export namespace TagRoutes {
               `SELECT * FROM Tag WHERE TagId = ?`, [req.params.tagId], (err, result) => {
                 if (err) throw err;
                 else if (result[0]) return res.json(result[0]);
-                else return res.status(503).send("Tag not found.");
+                else return res.status(500).send("Tag not found.");
               });
           });
         })
@@ -99,7 +99,7 @@ export namespace TagRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result.affectedRows === 1) return res.sendStatus(200);
-                else return res.status(503).send("Tag not found.");
+                else return res.status(500).send("Tag not found.");
               }
             );
           });

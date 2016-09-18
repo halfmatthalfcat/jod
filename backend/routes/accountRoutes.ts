@@ -26,7 +26,7 @@ export namespace AccountRoutes {
                 conn.query(`SELECT * FROM Account WHERE AccountId = ?`, [result.insertId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);
-                  else return res.status(503).send("Account not added.");
+                  else return res.status(500).send("Account not added.");
                 });
               } else throw Error("Account not added.");
             }
@@ -53,7 +53,7 @@ export namespace AccountRoutes {
                 conn.query(`SELECT * FROM Account WHERE AccountId = ?`, [req.body.accountId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);
-                  else return res.status(503).send("Account not found");
+                  else return res.status(500).send("Account not found");
                 });
               } else throw Error("Account not updated");
             }
@@ -90,7 +90,7 @@ export namespace AccountRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result[0]) return res.json(result[0]);
-              else return res.status(503).send("Account not found");
+              else return res.status(500).send("Account not found");
             }
           );
         });
@@ -106,7 +106,7 @@ export namespace AccountRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result.affectedRows === 1) return res.sendStatus(200);
-              else return res.status(503).send("Account not found");
+              else return res.status(500).send("Account not found");
             }
           );
         });

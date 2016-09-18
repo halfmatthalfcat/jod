@@ -43,7 +43,7 @@ export namespace UserInfoRoutes {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [result.insertId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);
-                  else return res.status(503).send("UserInfo not added");
+                  else return res.status(500).send("UserInfo not added");
                 });
               } else throw Error("UserInfo not added");
             }
@@ -78,7 +78,7 @@ export namespace UserInfoRoutes {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);
-                  else return res.status(503).send("UserInfo not updated");
+                  else return res.status(500).send("UserInfo not updated");
                 });
               }
             }
@@ -99,7 +99,7 @@ export namespace UserInfoRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result[0]) return res.json(result[0]);
-              else return res.status(503).send("User does not exist.");
+              else return res.status(500).send("User does not exist.");
             }
           );
         });
@@ -115,7 +115,7 @@ export namespace UserInfoRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result.affectedRows === 1) return res.sendStatus(200);
-              else res.status(503).send("User does not exist.");
+              else res.status(500).send("User does not exist.");
             }
           );
         });

@@ -3,13 +3,13 @@ DROP TABLE IF EXISTS UserInfo;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE UserInfo(
-  UserId INT NOT NULL,
-  Phone VARCHAR(12),
-  Address1 VARCHAR(100),
-  Address2 VARCHAR(100),
-  City VARCHAR(100),
-  State VARCHAR(2),
-  ZipCode INT,
+  userId INT NOT NULL,
+  phone VARCHAR(12),
+  address1 VARCHAR(100),
+  address2 VARCHAR(100),
+  city VARCHAR(100),
+  state VARCHAR(2),
+  zipCode INT,
   PRIMARY KEY(UserId),
   FOREIGN KEY(UserId)
     REFERENCES `User`(UserId)

@@ -2,9 +2,11 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as React from "react";
+import * as jQuery from "jquery";
 import {Link} from "react-router";
 import {isNullOrEmpty} from "../util/helpers";
 import {IToolbarProps, IToolbarState} from "./components";
+import {App} from "../util/api";
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
@@ -18,14 +20,33 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
   constructor(props: IToolbarProps) {
     super(props);
     this.state = {
-      loggedIn: false
+      showLogin: false
     };
   }
 
   public componentDidMount() {
-    if (!isNullOrEmpty(localStorage.getItem("jod_jwt"))){
+    if (!isNullOrEmpty(localStorage.getItem("jod_jwt"))) {
       const token = localStorage.getItem("jod_jwt");
+      App.login(token).then((user) => {
+        this.setState({
+          user: user,
+          showLogin: this.state.showLogin
+        });
+      });
+    } else {
+      console.log("Not jwt token found.");
+    }
+  }
 
+  private toggleLogin(): void {
+    const el = jQuery("#login-container");
+    switch (this.state.showLogin) {
+      case true: el.slideDown("fast", () => {
+        this.setState({ showLogin: false });
+      }); break;
+      case false: el.slideUp("fast", () => {
+        this.setState({ showLogin: true });
+      }); break;
     }
   }
 
@@ -37,7 +58,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
             <div className="nav-wrapper">
               <a href="#!" className="brand-logo center">JOliverDecor</a>
               {(() => {
-                if (this.state.loggedIn) {
+                if (this.state.user) {
                   return(
                     <ul className="right hide-on-med-and-down">
                       <li><Link to="/accounts">Accounts</Link></li>
@@ -49,13 +70,16 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                 } else {
                   return(
                     <ul className="right hide-on-med-and-down">
-                      <li><Link to="/login">Login</Link></li>
+                      <li><a onClick={ this.toggleLogin.bind(this) }>Login</a></li>
                     </ul>
                   );
                 }
               })()}
             </div>
           </nav>
+        </div>
+        <div id="login-container">
+          Login
         </div>
         { this.props.children }
       </div>

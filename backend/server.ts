@@ -6,12 +6,14 @@ import * as MySQL from "mysql";
 import * as fs from "fs";
 import * as BodyParser from "body-parser";
 
+import {AppRoutes} from "./routes/appRoutes";
 import {UserRoutes} from "./routes/userRoutes";
 import {AccountRoutes} from "./routes/accountRoutes";
 import {UserInfoRoutes} from "./routes/userInfoRoutes";
 import {BudgetRoutes} from "./routes/budgetRoutes";
 import {BudgetItemRoutes} from "./routes/budgetItemRoutes";
 import {TagRoutes} from "./routes/tagRoutes";
+import {Mailer} from "./util/mailer";
 
 class Server {
 
@@ -74,6 +76,7 @@ class Server {
       app.use(express.static("public"));
       app.use(express.static("../node_modules"));
 
+      app.use(AppRoutes.routes(db, config, new Mailer(config)));
       app.use(UserRoutes.routes(db));
       app.use(UserInfoRoutes.routes(db));
       app.use(AccountRoutes.routes(db));

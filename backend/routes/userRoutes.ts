@@ -28,7 +28,7 @@ export namespace UserRoutes {
                   `SELECT * FROM User WHERE UserId = ?`, [result.insertId], (err, result2) => {
                     if (err) throw err;
                     else if (result2[0]) return res.json(result2[0]);
-                    else return res.status(503).send("User not added.");
+                    else return res.status(500).send("User not added.");
                   }
                 );
               } else throw Error("User not added");
@@ -53,7 +53,7 @@ export namespace UserRoutes {
                   `SELECT * FROM User WHERE UserId = ?`, [req.body.userId], (err, result2) => {
                     if (err) throw err;
                     else if (result2[0]) return res.json(result2[0]);
-                    else return res.status(503).send("User not added.");
+                    else return res.status(500).send("User not added.");
                   }
                 );
               } else throw Error("User not updated");
@@ -90,7 +90,7 @@ export namespace UserRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result[0]) return res.json(result[0]);
-              else return res.status(503).send("User does not exist.");
+              else return res.status(500).send("User does not exist.");
             }
           );
         });
@@ -106,7 +106,7 @@ export namespace UserRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result.affectedRows === 1) return res.sendStatus(200);
-              else return res.status(503).send("User does not exist.");
+              else return res.status(500).send("User does not exist.");
             }
           );
         });

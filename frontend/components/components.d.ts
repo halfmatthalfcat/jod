@@ -4,7 +4,7 @@ interface IToolbarProps {
 }
 interface IToolbarState {
   user?: IUser;
-  loggedIn: Boolean;
+  showLogin: boolean;
 }
 
 interface ILoginProps {

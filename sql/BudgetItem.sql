@@ -3,12 +3,12 @@ DROP TABLE IF EXISTS BudgetItem;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE BudgetItem(
-  BudgetItemId INT AUTO_INCREMENT,
-  BudgetId INT NOT NULL,
-  Created DATETIME NOT NULL DEFAULT NOW(),
-  Description VARCHAR(300) NOT NULL,
-  TotalPrice DECIMAL(7, 2) NOT NULL,
-  Notes VARCHAR(500),
+  budgetItemId INT AUTO_INCREMENT,
+  budgetId INT NOT NULL,
+  created DATETIME NOT NULL DEFAULT NOW(),
+  description VARCHAR(300) NOT NULL,
+  totalPrice DECIMAL(7, 2) NOT NULL,
+  notes VARCHAR(500),
   PRIMARY KEY(BudgetItemId),
   FOREIGN KEY(BudgetId)
     REFERENCES Budget(BudgetId)

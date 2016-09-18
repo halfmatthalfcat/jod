@@ -33,7 +33,7 @@ export namespace BudgetItemRoutes {
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve BudgetItem");
                   });
-                } else return res.status(503).send("BudgetItem not added.");
+                } else return res.status(500).send("BudgetItem not added.");
               }
             );
           });
@@ -62,7 +62,7 @@ export namespace BudgetItemRoutes {
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve BudgetItem");
                   });
-                } else return res.status(503).send("BudgetItem not updated.");
+                } else return res.status(500).send("BudgetItem not updated.");
               }
             );
           });
@@ -81,7 +81,7 @@ export namespace BudgetItemRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result[0]) return res.json(result[0]);
-                else return res.status(503).send("BudgetItem not found.");
+                else return res.status(500).send("BudgetItem not found.");
               }
             );
           });
@@ -97,7 +97,7 @@ export namespace BudgetItemRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result.affectedRows === 1) return res.sendStatus(201);
-                else return res.status(503).send("BudgetItem not found.")
+                else return res.status(500).send("BudgetItem not found.");
               }
             );
           });
@@ -133,7 +133,7 @@ export namespace BudgetItemRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result.affectedRows === 1) return res.sendStatus(200);
-                else return res.status(503).send("Tag/BudgetItem not found");
+                else return res.status(500).send("Tag/BudgetItem not found");
               }
             );
           });
