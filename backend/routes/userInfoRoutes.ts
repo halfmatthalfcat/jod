@@ -18,6 +18,8 @@ export namespace UserInfoRoutes {
               INSERT INTO UserInfo
               (
                 UserId,
+                FirstName,
+                LastName,
                 Phone, 
                 Address1, 
                 Address2, 
@@ -26,10 +28,12 @@ export namespace UserInfoRoutes {
                 ZipCode
               )
               VALUES
-              (?, ?, ?, ?, ?, ?, ?)
+              (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `,
             [
               req.body.userId,
+              req.body.firstName,
+              req.body.lastName,
               req.body.phone,
               req.body.address1,
               req.body.address2,
@@ -39,8 +43,8 @@ export namespace UserInfoRoutes {
             ],
             (err, result) => {
               if (err) throw err;
-              else if (result.insertId) {
-                conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [result.insertId], (err, result2) => {
+              else if (result.affectedRows === 1) {
+                conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);
                   else return res.status(500).send("UserInfo not added");
@@ -54,27 +58,52 @@ export namespace UserInfoRoutes {
         connection(db, res, (conn) => {
           return conn.query(
             `
-              UPDATE  UserInfo
-              SET     Phone = ?,
-                      Address1 = ?,
-                      Address2 = ?,
-                      City = ?,
-                      State = ?,
-                      ZipCode = ?
-              WHERE   UserId = ?
+              INSERT INTO UserInfo
+              (
+                UserId,
+                FirstName,
+                LastName,
+                Address1,
+                Address2,
+                City,
+                State,
+                ZipCode,
+                Phone
+              )
+              VALUES
+              (?, ?, ?, ?, ?, ?, ?, ?, ?)
+              ON DUPLICATE KEY UPDATE
+                FirstName = ?,
+                LastName = ?,
+                Address1 = ?,
+                Address2 = ?,
+                City = ?,
+                State = ?,
+                ZipCode = ?,
+                Phone = ?
             `,
             [
-              req.body.phone,
-              req.body.address1,
-              req.body.address2,
-              req.body.city,
-              req.body.state,
-              req.body.zipCode,
-              req.body.userId
+              req.body.userId,
+              req.body.firstName,
+              req.body.lastName,
+              req.body.address1 || null,
+              req.body.address2 || null,
+              req.body.city || null,
+              req.body.state || null,
+              req.body.zipCode || null,
+              req.body.phone || null,
+              req.body.firstName,
+              req.body.lastName,
+              req.body.address1 || null,
+              req.body.address2 || null,
+              req.body.city || null,
+              req.body.state || null,
+              req.body.zipCode || null,
+              req.body.phone || null
             ],
             (err, result) => {
               if (err) throw err;
-              else if (result.affectedRows === 1) {
+              else if (result.affectedRows > 1) {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
                   if (err) throw err;
                   else if (result2[0]) return res.json(result2[0]);

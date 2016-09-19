@@ -34,6 +34,8 @@ export interface IUser {
 }
 
 export interface IUserInfo {
+  firstName: string;
+  lastName: string;
   userId?: number;
   phone?: string;
   address1?: string;
@@ -47,4 +49,9 @@ export interface ITag {
   tagId?: number;
   tagName: string;
   tagColor: string;
+}
+
+export interface IFullUser {
+  user: IUser;
+  userInfo: IUserInfo;
 }

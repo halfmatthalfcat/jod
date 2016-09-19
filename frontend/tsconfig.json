@@ -2,13 +2,14 @@
   "compilerOptions": {
     "target": "es6",
     "jsx": "react",
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true
   },
   "filesGlob": [
     "**/*.tsx",
     "**/*.ts.d",
     "**/*.ts",
-    "../common/*.ts",
-    "../common/*.ts.d"
+    "../common/**/*.ts",
+    "../common/**/*.ts.d"
   ]
 }

@@ -67,7 +67,11 @@ export namespace AccountRoutes {
           return conn.query(
             `
               SELECT  *
-              FROM    Account
+              FROM    Account as a
+              JOIN    User as u
+              ON      a.UserId = u.UserId
+              WHERE   a.Active = 1 AND
+                      u.Active = 1
             `,
             (err, result) => {
               if (err) throw err;
@@ -99,8 +103,9 @@ export namespace AccountRoutes {
         connection(db, res, (conn) => {
           return conn.query(
             `
-              DELETE FROM Account
-              WHERE AccountId = ?
+              UPDATE  Account
+              SET     Active = 0
+              WHERE   AccountId = ?
             `,
             [req.params.accountId],
             (err, result) => {
@@ -119,7 +124,8 @@ export namespace AccountRoutes {
             `
               SELECT  *
               FROM    Budget
-              WHERE   AccountId = ?
+              WHERE   AccountId = ? AND
+                      Active = 1
             `,
             [req.params.accountId],
             (err, result) => {

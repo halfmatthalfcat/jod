@@ -9,9 +9,9 @@ CREATE TABLE BudgetItem(
   description VARCHAR(300) NOT NULL,
   totalPrice DECIMAL(7, 2) NOT NULL,
   notes VARCHAR(500),
-  PRIMARY KEY(BudgetItemId),
-  FOREIGN KEY(BudgetId)
-    REFERENCES Budget(BudgetId)
+  PRIMARY KEY(budgetItemId),
+  FOREIGN KEY(budgetId)
+    REFERENCES Budget(budgetId)
     ON UPDATE CASCADE
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
 ) ENGINE = INNODB DEFAULT CHARSET=utf8;

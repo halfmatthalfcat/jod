@@ -84,8 +84,9 @@ export namespace BudgetRoutes {
         connection(db, res, (conn) => {
           return conn.query(
             `
-              DELETE FROM Budget
-              WHERE BudgetId = ?
+              UPDATE  Budget
+              SET     Active = 0
+              WHERE   BudgetId = ?
             `,
             [req.params.budgetId],
             (err, result) => {
@@ -117,10 +118,10 @@ export namespace BudgetRoutes {
                     conn.query(
                       `
                         SELECT  t.*
-                        FROM    Tags as ts
+                        FROM    TagMap as tm
                         JOIN    Tag as t
-                        ON      ts.TagId = t.TagId
-                        WHERE   ts.BudgetItemId = ?
+                        ON      tm.TagId = t.TagId
+                        WHERE   tm.BudgetItemId = ?
                       `,
                       [budgetItem.BudgetItemId],
                       (err, result2) => {

@@ -1,12 +1,11 @@
 /// <reference path="./components.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from "react";
-import * as jQuery from "jquery";
 import {Link} from "react-router";
 import {isNullOrEmpty} from "../util/helpers";
 import {IToolbarProps, IToolbarState} from "./components";
 import {App} from "../util/api";
+import {Materialize} from "../../common/materialize/materialize";
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 
@@ -16,6 +15,16 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
     display: "flex",
     flexFlow: "column nowrap",
   };
+
+  private loginContainerStyle(visible: boolean): any {
+    return {
+      display: visible ? "flex" : "none",
+      backgroundColor: "#CED5DB",
+      flexFlow: "row nowrap",
+      alignItems: "center",
+      justifyContent: "center"
+    };
+  }
 
   constructor(props: IToolbarProps) {
     super(props);
@@ -27,43 +36,55 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
   public componentDidMount() {
     if (!isNullOrEmpty(localStorage.getItem("jod_jwt"))) {
       const token = localStorage.getItem("jod_jwt");
-      App.login(token).then((user) => {
+      App.validate(token).then((user) => {
         this.setState({
           user: user,
-          showLogin: this.state.showLogin
+          showLogin: false
         });
       });
     } else {
       console.log("Not jwt token found.");
     }
+    this.handleLogin();
   }
 
   private toggleLogin(): void {
-    const el = jQuery("#login-container");
+    const el = $("#login-container");
     switch (this.state.showLogin) {
-      case true: el.slideDown("fast", () => {
+      case true: el.slideUp("fast", () => {
         this.setState({ showLogin: false });
       }); break;
-      case false: el.slideUp("fast", () => {
+      case false: el.slideDown("fast", () => {
         this.setState({ showLogin: true });
       }); break;
     }
+  }
+
+  private handleLogin(): void {
+    $("#email").on("keyup", (event) => {
+      if (event.keyCode === 13) {
+        App.requestLogin($(event.target).val()).then((emailSent) => {
+          if(emailSent) Materialize.toast("Email sent", 2000);
+          else Materialize.toast("Email not found", 2000);
+        });
+      }
+    });
   }
 
   public render() {
     return (
       <div style={ this.containerStyle }>
         <div className="navbar-fixed">
-          <nav>
+          <nav style={{ backgroundColor: "#7094DE" }}>
             <div className="nav-wrapper">
-              <a href="#!" className="brand-logo center">JOliverDecor</a>
+              <a href="/" className="brand-logo center">JOliverDecor</a>
               {(() => {
                 if (this.state.user) {
                   return(
                     <ul className="right hide-on-med-and-down">
+                      <li style={{ marginRight: "15px" }}>Hi, { this.state.user.username }!</li>
+                      <li><Link to="/users">Users</Link></li>
                       <li><Link to="/accounts">Accounts</Link></li>
-                      <li><Link to="/budgets">Budgets</Link></li>
-                      <li>Hi, { this.state.user.username }</li>
                       <li><Link to="/logout">Logout</Link></li>
                     </ul>
                   );
@@ -78,8 +99,16 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
             </div>
           </nav>
         </div>
-        <div id="login-container">
-          Login
+        <div id="login-container" style={ this.loginContainerStyle(this.state.showLogin) }>
+          <div className="input-field" style={{ width: "50%" }}>
+            <input
+              placeholder="email address"
+              id="email"
+              type="text"
+              className="validate"
+              style={{ textAlign: "center" }}
+            />
+          </div>
         </div>
         { this.props.children }
       </div>

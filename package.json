@@ -11,10 +11,12 @@
     "express": "4.14.0",
     "jquery": "3.1.0",
     "jwt-simple": "^0.5.0",
-    "materialize-css": "0.97.7",
+    "materialize-css": "github:dogfalo/materialize",
     "mysql": "2.11.1",
     "nodemailer": "^2.6.0",
+    "photoswipe": "^4.1.1",
     "react": "15.3.1",
+    "react-addons-update": "^15.3.1",
     "react-dom": "15.3.1",
     "react-router": "^2.8.1"
   },

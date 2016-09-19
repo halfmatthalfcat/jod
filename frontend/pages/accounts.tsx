@@ -2,6 +2,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as React from "react";
+import {IAccountsProps, IAccountsState} from "./pages";
 
 class Accounts extends React.Component<IAccountsProps, IAccountsState> {
 

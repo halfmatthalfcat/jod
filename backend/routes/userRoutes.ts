@@ -2,6 +2,8 @@ import {connection} from "../util/helpers";
 
 import {IPool} from "mysql";
 import {Router} from "express";
+import {UserInfo} from "../../common/models/userInfo";
+import {FullUser} from "../../common/models/fullUser";
 
 export namespace UserRoutes {
   const router = Router();
@@ -21,7 +23,6 @@ export namespace UserRoutes {
               `,
             [req.body.email, req.body.username],
             (err, result) => {
-              console.log(result);
               if (err) throw err;
               else if (result.insertId) {
                 conn.query(
@@ -67,13 +68,35 @@ export namespace UserRoutes {
         connection(db, res, (conn) => {
           conn.query(
             `
-              SELECT * FROM User
+              SELECT * FROM User WHERE Active = 1
             `,
             (err, result) => {
               if (err) throw err;
               else return res.json(result);
             }
           );
+        });
+      });
+
+    router.route("/api/user/all/full")
+      .get((req, res) => {
+        connection(db, res, (conn) => {
+          conn.query(`SELECT * FROM User WHERE Active = 1`, (err, result) => {
+            if (err) throw err;
+            else Promise.all(result.map((user) => {
+              return new Promise((resolve, reject) => {
+                conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [user.userId], (err, result2) => {
+                  if (err) throw err;
+                  else if (result2[0]) resolve({ user: user, userInfo: result2[0] as UserInfo } as FullUser);
+                  else resolve({ user: user, userInfo: {} as UserInfo} as FullUser);
+                });
+              });
+            })).then((fullUsers) => {
+              res.json(fullUsers);
+            }).catch((reject) => {
+              res.status(500).send("Unable get all full users.");
+            });
+          });
         });
       });
 
@@ -84,7 +107,8 @@ export namespace UserRoutes {
             `
               SELECT  *
               FROM    User
-              WHERE   UserId = ?
+              WHERE   Active = 1 AND
+                      UserId = ?
             `,
             [req.params.userId],
             (err, result) => {
@@ -99,8 +123,9 @@ export namespace UserRoutes {
         connection(db, res, (conn) => {
           conn.query(
             `
-              DELETE FROM User
-              WHERE UserId = ?
+              UPDATE  User
+              SET     Active = 0
+              WHERE   UserId = ?
             `,
             [req.params.userId],
             (err, result) => {

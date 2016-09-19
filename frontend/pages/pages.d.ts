@@ -1,3 +1,5 @@
+import {IFullUser} from "../../common/models/models";
+
 interface IHomeProps {
 }
 interface IHomeState {
@@ -13,10 +15,11 @@ interface IAccountsProps {
 interface IAccountsState {
 }
 
-interface IAccountProps {
-  params: any
+interface IUsersProps {
 }
-interface IAccountState {
+interface IUsersState {
+  users: Array<IFullUser>;
+  user?: IFullUser;
 }
 
 interface IBudgetProps {

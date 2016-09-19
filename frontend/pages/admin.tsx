@@ -2,6 +2,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as React from "react";
+import {IAdminProps, IAdminState} from "./pages";
 
 class Admin extends React.Component<IAdminProps, IAdminState> {
 
@@ -20,7 +21,6 @@ class Admin extends React.Component<IAdminProps, IAdminState> {
     return (
       <div>
         Admin
-        { this.props.children }
       </div>
     );
   }

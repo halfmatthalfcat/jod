@@ -1,4 +1,4 @@
-import {IUser} from "../../common/models/models";
+import {IUser, IFullUser} from "../../common/models/models";
 
 interface IToolbarProps {
 }
@@ -8,11 +8,5 @@ interface IToolbarState {
 }
 
 interface ILoginProps {
-}
-interface ILoginState {
-}
-
-interface INavProps {
-}
-interface INavState {
+  params?: any;
 }

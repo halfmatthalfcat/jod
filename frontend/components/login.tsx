@@ -1,26 +1,21 @@
 /// <reference path="./components.d.ts" />
 /// <reference path="../../typings/index.d.ts" />
 
-import * as React from "react";
-import {ILoginProps, ILoginState} from "./components";
+import {ILoginProps} from "./components";
 
-class Login extends React.Component<ILoginProps, ILoginState> {
-
-  public state: ILoginState;
+class Login extends React.Component<ILoginProps, {}> {
 
   constructor(props: ILoginProps) {
     super(props);
-    this.state = {};
   }
 
   public componentDidMount() {
-
+    localStorage.setItem("jod_jwt", this.props.params.token);
+    window.location.href = "/";
   }
 
   public render() {
-    return (
-      React.DOM.div(null, "Login")
-    );
+    return <div />;
   }
 
 }

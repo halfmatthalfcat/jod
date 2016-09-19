@@ -1,12 +1,12 @@
 import { Ajax } from "./helpers";
-import {IUser, IUserInfo, IAccount, IBudget, IBudgetItem, ITag} from "../../common/models/models";
+import {IUser, IUserInfo, IAccount, IBudget, IBudgetItem, ITag, IFullUser} from "../../common/models/models";
 
 export namespace App {
   export function requestLogin(email: string): Promise<boolean> {
     return Ajax.get<boolean>(`/request/${email}`);
   }
-  export function login(token: string): Promise<IUser> {
-    return Ajax.get<IUser>(`/login/${token}`);
+  export function validate(token: string): Promise<IUser> {
+    return Ajax.get<IUser>(`/validate/${token}`);
   }
 }
 
@@ -18,13 +18,16 @@ export namespace User {
     return Ajax.post<IUser, IUser>("/api/user", user);
   }
   export function updateUser(user: IUser): Promise<IUser> {
-    return Ajax.put<IUser, IUser>(`/api/user/${user.userId}`, user);
+    return Ajax.put<IUser, IUser>("/api/user", user);
   }
   export function deleteUser(userId: number): Promise<void> {
     return Ajax.del(`/api/user/${userId}`);
   }
   export function getAllUsers(): Promise<Array<IUser>> {
     return Ajax.get<Array<IUser>>("/api/user/all");
+  }
+  export function getAllUsersFull(): Promise<Array<IFullUser>> {
+    return Ajax.get<Array<IFullUser>>("/api/user/all/full");
   }
 }
 

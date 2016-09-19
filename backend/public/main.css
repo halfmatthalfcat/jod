@@ -1,39 +1,25 @@
 html, body {
     height: 100%;
     width: 100%;
+    font-family: 'Open Sans', sans-serif;
+    background-color: #E2CBAB;
 }
 
-.container{
-    display: flex;
-    flex-flow: row wrap;
-    height: 100%;
-    width: 100%;
-    margin: 0;
-    padding: 0;
+.card-common {
+    background-color: #AB7345;
+    color: white;
 }
 
-.toolbar{
-    flex: 1 100%;
-    order: 1;
+.brand-logo {
+    font-family: 'Kaushan Script', cursive !important;
 }
 
-.logo {
-    font-family: Didot, 'Didot LT STD', 'Hoefler Text', Garamond, 'Times New Roman', serif;
+::-webkit-input-placeholder {
+    color: white;
+    text-align: center;
 }
 
-.loginForm {
-    margin: 0 !important;
-}
-
-.loginModalHeader {
-    color: black;
-}
-
-.input {
-    color: black;
-}
-
-.loader{
-    right: 13px;
-    bottom: 3px;
+::-moz-placeholder {
+    color: white;
+    text-align: center;
 }

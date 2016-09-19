@@ -2,6 +2,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import * as React from "react";
+import {IBudgetProps, IBudgetState} from "./pages";
 
 class Budget extends React.Component<IBudgetProps, IBudgetState> {
 

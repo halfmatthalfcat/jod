@@ -2,7 +2,7 @@
 
 import {IUser} from "./models";
 
-export class User implements IUser {
+class User implements IUser {
 
   userId: number;
   username: string;

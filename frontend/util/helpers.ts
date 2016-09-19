@@ -66,7 +66,8 @@ export namespace Ajax {
       $.ajax({
         url: `${url}${buildParams(params)}`,
         data: JSON.stringify(body),
-        method: "PUT"
+        method: "PUT",
+        contentType: "application/json"
       }).then((data, textStatus, jqXHR) => {
         switch (jqXHR.status) {
           case 200:

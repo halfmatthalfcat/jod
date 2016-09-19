@@ -14,26 +14,31 @@ export namespace AppRoutes {
     config: any,
     mailer: Mailer
   ): Router {
-      router.route("/login/:token")
+      router.route("/validate/:token")
         .get((req, res) => {
-          const jwtResult = jwt.decode(req.params.token, config.jwt.secret);
-          if (jwtResult) {
-            connection(db, res, (conn) => {
-              conn.query(
-                `
+          try {
+            const jwtResult = jwt.decode(req.params.token, config.jwt.secret);
+            if (jwtResult) {
+              connection(db, res, (conn) => {
+                conn.query(
+                  `
                   SELECT  *
                   FROM    User
-                  WHERE   UserId = ?
+                  WHERE   Active = 1 AND
+                          UserId = ?
                 `,
-                [jwtResult.sub],
-                (err, result) => {
-                  if (err) throw err;
-                  else if (result[0]) return res.json(result[0]);
-                  else return res.status(500).send("User not found.");
-                }
-              );
-            });
-          } else res.sendStatus(401);
+                  [jwtResult.sub],
+                  (err, result) => {
+                    if (err) throw err;
+                    else if (result[0]) return res.json(result[0]);
+                    else return res.status(500).send("User not found.");
+                  }
+                );
+              });
+            } else res.sendStatus(401);
+          } catch (err) {
+            res.status(401).send("Invalid token.");
+          }
         });
 
       router.route("/request/:email")
@@ -44,7 +49,9 @@ export namespace AppRoutes {
                 SELECT EXISTS(
                   SELECT  1
                   FROM    User
-                  WHERE   Email LIKE ?
+                  WHERE   Active = 1 AND
+                          Email LIKE ?
+                       
                 ) as 'exists'
               `,
               [req.params.email],
@@ -64,7 +71,7 @@ export namespace AppRoutes {
                         });
                     } else return res.status(500).send(false);
                   });
-                } else return res.status(500).send(false);
+                } else return res.status(200).send(false);
               }
             );
           });

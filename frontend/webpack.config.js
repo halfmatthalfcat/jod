@@ -1,3 +1,5 @@
+var webpack = require("webpack");
+
 module.exports = {
   entry: './app.tsx',
   output: {
@@ -15,6 +17,15 @@ module.exports = {
   },
   externals: {
     "react": "React",
-    "react-dom": "ReactDOM"
-  }
+    "react-dom": "ReactDOM",
+    "jquery": "$"
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      $: "jquery",
+      jQuery: "jquery",
+      React: "react",
+      ReactDOM: "react-dom"
+    })
+  ]
 };
