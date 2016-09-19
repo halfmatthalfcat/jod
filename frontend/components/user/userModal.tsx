@@ -12,12 +12,25 @@ class UserModal extends React.Component<IUserModalProps, IUserModalState> {
   constructor(props: IUserModalProps) {
     super(props);
     console.log(props);
-    this.state = {
-      user: update(props.user, {
+    if (props.user) {
+      this.state = {
+        user: update(props.user, {
+          userInfo: {
+            userId: {$set: props.user.user.userId}
+          }
+        })
+      };
+    } else this.state = {
+      user: {
+        user: {
+          username: "",
+          email: ""
+        },
         userInfo: {
-          userId: {$set: props.user.user.userId}
+          firstName: "",
+          lastName: ""
         }
-      })
+      }
     };
   }
 

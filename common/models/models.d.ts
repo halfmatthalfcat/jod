@@ -8,7 +8,7 @@ export interface IAccount {
 
 export interface IBudget {
   budgetId?: number;
-  accountId: number;
+  userId: number;
   budgetName: string;
   created: string;
 }

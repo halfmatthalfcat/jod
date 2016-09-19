@@ -8,6 +8,19 @@ export function isNullOrEmpty(o: any): Boolean {
   }
 }
 
+export function chunk<T>(array: Array<T>, chunkSize: number, shift?: number): Array<Array<T>> {
+  return array.reduce((acc, curr, i) => {
+    if ((i + 1) % chunkSize === 0) {
+      acc[acc.length - 1].push(curr);
+      acc.push([]);
+      return acc;
+    } else {
+      acc[acc.length - 1].push(curr);
+      return acc;
+    }
+  }, [[]] as Array<Array<T>>);
+}
+
 export namespace Ajax {
   function buildParams(params?: Map<String, String>): String {
     if (!isNullOrEmpty(params)) {
@@ -24,7 +37,7 @@ export namespace Ajax {
   export function get<T>(
     url: String,
     params?: Map<String, String>
-  ): Promise<T | number> {
+  ): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       $.get(
         `${url}${buildParams(params)}`
@@ -44,10 +57,13 @@ export namespace Ajax {
     params?: Map<String, String>
   ): Promise<B> {
     return new Promise<B>((resolve, reject) => {
-      $.post(
-        `${url}${buildParams(params)}`,
-        JSON.stringify(body)
-      ).then((data, textStatus, jqXHR) => {
+      $.ajax({
+        url: `${url}${buildParams(params)}`,
+        data: JSON.stringify(body),
+        contentType: "application/json; charset=utf-8",
+        type: "POST",
+        dataType: "json"
+      }).then((data, textStatus, jqXHR) => {
         switch (jqXHR.status) {
           case 200:
           case 201: resolve(data as B); break;
@@ -67,7 +83,7 @@ export namespace Ajax {
         url: `${url}${buildParams(params)}`,
         data: JSON.stringify(body),
         method: "PUT",
-        contentType: "application/json"
+        contentType: "application/json; charset=utf-8"
       }).then((data, textStatus, jqXHR) => {
         switch (jqXHR.status) {
           case 200:

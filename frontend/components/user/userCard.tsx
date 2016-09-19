@@ -6,7 +6,6 @@ class UserCard extends React.Component<IUserCardProps, IUserCardState> {
 
   constructor(props: IUserCardProps) {
     super(props);
-    console.log(`Crating user card for ${props.user.user.username}`);
     this.state = {};
   }
 

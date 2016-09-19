@@ -5,17 +5,17 @@ import {IBudget} from "./models";
 class Budget implements IBudget {
 
   budgetId: number;
-  accountId: number;
+  userId: number;
   budgetName: string;
   created: string;
 
   constructor(
-    accountId: number,
+    userId: number,
     budgetName: string,
     created: string,
     budgetId?: number
   ) {
-    this.accountId = accountId;
+    this.userId = userId;
     this.budgetName = budgetName;
     this.created = created;
     if (budgetId) {

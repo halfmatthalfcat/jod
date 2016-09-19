@@ -8,7 +8,6 @@ import * as BodyParser from "body-parser";
 
 import {AppRoutes} from "./routes/appRoutes";
 import {UserRoutes} from "./routes/userRoutes";
-import {AccountRoutes} from "./routes/accountRoutes";
 import {UserInfoRoutes} from "./routes/userInfoRoutes";
 import {BudgetRoutes} from "./routes/budgetRoutes";
 import {BudgetItemRoutes} from "./routes/budgetItemRoutes";
@@ -79,7 +78,6 @@ class Server {
       app.use(AppRoutes.routes(db, config, new Mailer(config)));
       app.use(UserRoutes.routes(db));
       app.use(UserInfoRoutes.routes(db));
-      app.use(AccountRoutes.routes(db));
       app.use(BudgetRoutes.routes(db));
       app.use(BudgetItemRoutes.routes(db));
       app.use(TagRoutes.routes(db));

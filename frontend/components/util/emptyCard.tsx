@@ -8,7 +8,7 @@ class EmptyCard extends React.Component<IEmptyCardProps, {}> {
     return (
       <div
         className="card-panel"
-        onClick={ this.props.onClick() }
+        onClick={() => { this.props.clicked(); }}
         style={{ cursor: "pointer" }}
       >
         {(() => {

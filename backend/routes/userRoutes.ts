@@ -136,6 +136,25 @@ export namespace UserRoutes {
           );
         });
       });
+
+    router.route("/api/user/:userId/budget")
+      .get((req, res) => {
+        connection(db, res, (conn) => {
+          conn.query(
+            `
+              SELECT  *
+              FROM    Budget
+              WHERE   UserId = ?
+            `,
+            [req.params.userId],
+            (err, result) => {
+              if (err) throw err;
+              else res.json(result);
+            }
+          );
+        });
+      });
+
     return router;
   }
 }

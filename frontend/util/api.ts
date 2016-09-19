@@ -29,6 +29,9 @@ export namespace User {
   export function getAllUsersFull(): Promise<Array<IFullUser>> {
     return Ajax.get<Array<IFullUser>>("/api/user/all/full");
   }
+  export function getUserBudgets(userId: number): Promise<Array<IBudget>> {
+    return Ajax.get<Array<IBudget>>(`/api/user/${userId}/budget`);
+  }
 }
 
 export namespace UserInfo {
@@ -43,27 +46,6 @@ export namespace UserInfo {
   }
   export function deleteUserInfo(userInfo: IUserInfo): Promise<IUserInfo> {
     throw new Error("Not implemented");
-  }
-}
-
-export namespace Account {
-  export function getAccount(accountId: number): Promise<IAccount> {
-    return Ajax.get<IAccount>(`/api/account/${accountId}`);
-  }
-  export function addAccount(account: IAccount): Promise<IAccount> {
-    return Ajax.post<IAccount, IAccount>("/api/account", account);
-  }
-  export function updateAccount(account: IAccount): Promise<IAccount> {
-    return Ajax.put<IAccount, IAccount>("/api/account", account);
-  }
-  export function deleteAccount(accountId: number): Promise<void> {
-    return Ajax.del(`/api/account/${accountId}`);
-  }
-  export function getAllAccounts(): Promise<Array<IAccount>> {
-    return Ajax.get<Array<IAccount>>("/api/account/all");
-  }
-  export function getAccountBudgets(accountId: number): Promise<Array<IBudget>> {
-    return Ajax.get<Array<IBudget>>(`/api/account/${accountId}/budgets`);
   }
 }
 

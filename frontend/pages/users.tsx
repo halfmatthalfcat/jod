@@ -1,13 +1,13 @@
 /// <reference path="./pages.d.ts" />
-/// <reference path="../../typings/index.d.ts" />
 
-import * as React from "react";
 import {IUsersProps, IUsersState} from "./pages";
 import {IFullUser} from "../../common/models/models";
 import {User, UserInfo} from "../util/api";
 import {UserCard} from "../components/user/userCard";
 import {UserModal} from "../components/user/userModal";
-import {EmptyCard} from "../components/util/emptyCard";
+import {chunk} from "../util/helpers";
+import {FloatingAction} from "../components/util/floatingAction";
+const update = require("react-addons-update");
 
 class Users extends React.Component<IUsersProps, IUsersState> {
 
@@ -28,8 +28,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     });
   }
 
-  private userModal = (user?: IFullUser) => {
-    this.setState({ user: user, users: this.state.users });
+  private userModal(user?: IFullUser): void {
     $(`#userModal${ user ? user.user.userId : "" }`).openModal({
       dismissible: true,
       ready: () => { console.log("User modal open"); },
@@ -37,7 +36,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     });
   };
 
-  private upsertUser = (user: IFullUser) => {
+  private upsertUser(user: IFullUser): void {
     if (user.user.userId) {
       UserInfo.updateUserInfo(user.userInfo).then((newUserInfo) => {
         User.updateUser(user.user).then((newUser) => {
@@ -45,25 +44,28 @@ class Users extends React.Component<IUsersProps, IUsersState> {
             this.setState({
               users: users
             });
-            $(`#userModal${ user ? user.user.userId : "" }`).closeModal();
+            $(`#userModal${ user.user.userId ? user.user.userId : "" }`).closeModal();
           });
         });
       });
     } else {
       User.addUser(user.user).then((newUser) => {
-        UserInfo.addUserInfo(user.userInfo).then((newUserInfo) => {
+        const updatedUserInfo = update(user.userInfo, {
+          userId: {$set: newUser.userId}
+        });
+        UserInfo.addUserInfo(updatedUserInfo).then((newUserInfo) => {
           User.getAllUsersFull().then((users) => {
             this.setState({
               users: users
             });
-            $(`#userModal${ user ? user.user.userId : "" }`).closeModal();
+            $(`#userModal${ user.user.userId ? user.user.userId : "" }`).closeModal();
           });
         });
       });
     }
   };
 
-  private deleteUser = (user: IFullUser) => {
+  private deleteUser(user: IFullUser): void {
     User.deleteUser(user.user.userId).then((deleted) => {
       User.getAllUsersFull().then((users) => {
         this.setState({ users: users });
@@ -73,28 +75,36 @@ class Users extends React.Component<IUsersProps, IUsersState> {
 
   public render() {
     return (
-      <div className="row">
-        <div className="col s12">
-          {(() => {
-            return this.state.users.map((user: IFullUser) => {
-              return (
-                <div>
-                  <UserCard
-                    key={ `userCard${user.user.userId}` }
-                    user={user}
-                    edit={ this.userModal.bind(this, user) }
-                    del={ this.deleteUser.bind(this, user) }
-                  />
-                  <UserModal
-                    key={ `userModal${user.user.userId}` }
-                    user={user}
-                    update={ this.upsertUser }
-                  />
-                </div>
-              );
-            });
-          })()}
-        </div>
+      <div>
+        {(() => {
+          return chunk(this.state.users, 4).map((elm) => {
+            return (
+              <div className="row">
+                {(() => {
+                  return elm.map((user) => {
+                    return (
+                      <div className="col s3">
+                        <UserCard
+                          key={ `userCard${user.user.userId}` }
+                          user={user}
+                          edit={ this.userModal.bind(this, user) }
+                          del={ this.deleteUser.bind(this, user) }
+                        />
+                        <UserModal
+                          key={ `userModal${user.user.userId}` }
+                          user={user}
+                          update={ this.upsertUser.bind(this) }
+                        />
+                      </div>
+                    );
+                  });
+                })()}
+              </div>
+            );
+          });
+        })()}
+        <UserModal key="userModal" update={ this.upsertUser.bind(this) } />
+        <FloatingAction clicked={ this.userModal }/>
       </div>
     );
   }

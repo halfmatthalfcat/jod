@@ -1,5 +1,9 @@
 interface IEmptyCardProps {
   message: string;
   icon?: string;
-  onClick: () => void;
+  clicked: () => void;
+}
+
+interface IFloatingActionProps {
+  clicked: () => void;
 }

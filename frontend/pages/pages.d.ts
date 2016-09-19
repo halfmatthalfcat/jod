@@ -1,4 +1,4 @@
-import {IFullUser} from "../../common/models/models";
+import {IFullUser, IBudget} from "../../common/models/models";
 
 interface IHomeProps {
 }
@@ -13,6 +13,7 @@ interface IAdminState {
 interface IAccountsProps {
 }
 interface IAccountsState {
+  users?: Array<[IFullUser, Array<IBudget>]>;
 }
 
 interface IUsersProps {

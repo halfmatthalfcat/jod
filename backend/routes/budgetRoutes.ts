@@ -16,11 +16,11 @@ export namespace BudgetRoutes {
           return conn.query(
             `
               INSERT INTO Budget
-              (AccountId, BudgetName)
+              (UserId, BudgetName)
               VALUES
               (?, ?)
             `,
-            [req.body.accountId, req.body.budgetName],
+            [req.body.userId, req.body.budgetName],
             (err, result) => {
               if (err) throw err;
               else if (result.insertId) {
@@ -39,12 +39,12 @@ export namespace BudgetRoutes {
           return conn.query(
             `
               UPDATE  Budget
-              SET     AccountId = ?,
+              SET     UserId = ?,
                       BudgetName = ?
               WHERE   BudgetId = ?
             `,
             [
-              req.body.accountId,
+              req.body.userId,
               req.body.budgetName,
               req.body.budgetId
             ],
