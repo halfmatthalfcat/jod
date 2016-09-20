@@ -5,7 +5,7 @@ import {Link} from "react-router";
 import {isNullOrEmpty} from "../util/helpers";
 import {IToolbarProps, IToolbarState} from "./components";
 import {App} from "../util/api";
-import {Materialize} from "../../common/materialize/materialize";
+import "materialize-css";
 
 class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
 

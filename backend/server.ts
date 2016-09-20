@@ -53,7 +53,8 @@ class Server {
         host: config.mysql.host,
         database: config.mysql.database,
         user: config.mysql.username,
-        password: config.mysql.password
+        password: config.mysql.password,
+        timezone: "utc"
       });
       pool.getConnection((err, conn) => {
         if (err) {

@@ -144,12 +144,13 @@ export namespace UserRoutes {
             `
               SELECT  *
               FROM    Budget
-              WHERE   UserId = ?
+              WHERE   Active = 1 AND
+                      UserId = ?
             `,
             [req.params.userId],
             (err, result) => {
               if (err) throw err;
-              else res.json(result);
+              else return res.json(result);
             }
           );
         });

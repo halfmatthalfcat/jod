@@ -10,7 +10,7 @@ export interface IBudget {
   budgetId?: number;
   userId: number;
   budgetName: string;
-  created: string;
+  created?: string;
 }
 
 export interface IBudgetItem {

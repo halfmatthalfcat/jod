@@ -2,7 +2,7 @@
 /// <reference path="../../../typings/index.d.ts" />
 
 import {IUserModalProps, IUserModalState} from "./user";
-import {Materialize} from "../../../common/materialize/materialize";
+import "materialize-css";
 const update = require("react-addons-update");
 
 class UserModal extends React.Component<IUserModalProps, IUserModalState> {
@@ -11,7 +11,6 @@ class UserModal extends React.Component<IUserModalProps, IUserModalState> {
 
   constructor(props: IUserModalProps) {
     super(props);
-    console.log(props);
     if (props.user) {
       this.state = {
         user: update(props.user, {

@@ -1,12 +1,9 @@
-import {IUserCardProps, IUserCardState} from "./user";
+import {IUserCardProps} from "./user";
 
-class UserCard extends React.Component<IUserCardProps, IUserCardState> {
-
-  public state: IUserCardState;
+class UserCard extends React.Component<IUserCardProps, {}> {
 
   constructor(props: IUserCardProps) {
     super(props);
-    this.state = {};
   }
 
   public render() {

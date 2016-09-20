@@ -12,15 +12,13 @@ class Budget implements IBudget {
   constructor(
     userId: number,
     budgetName: string,
-    created: string,
+    created?: string,
     budgetId?: number
   ) {
     this.userId = userId;
     this.budgetName = budgetName;
-    this.created = created;
-    if (budgetId) {
-      this.budgetId = budgetId;
-    }
+    if (created) this.created = created;
+    if (budgetId) this.budgetId = budgetId;
   }
 
 }
