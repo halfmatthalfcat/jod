@@ -1,5 +1,5 @@
 import { Ajax } from "./helpers";
-import {IUser, IUserInfo, IAccount, IBudget, IBudgetItem, ITag, IFullUser} from "../../common/models/models";
+import {IUser, IUserInfo, IBudget, IBudgetItem, ITag, IFullUser, ITagGroup} from "../../common/models/models";
 
 export namespace App {
   export function requestLogin(email: string): Promise<boolean> {
@@ -49,7 +49,7 @@ export namespace UserInfo {
   }
 }
 
-export namespace Budget {
+export namespace BudgetApi {
   export function getBudget(budgetId: number): Promise<IBudget> {
     return Ajax.get<IBudget>(`/api/budget/${budgetId}`);
   }
@@ -92,16 +92,25 @@ export namespace Tag {
   export function getTag(tagId: number): Promise<ITag> {
     return Ajax.get<ITag>(`/api/tag/${tagId}`);
   }
-  export function addTag(tag: ITag): Promise<ITag> {
-    return Ajax.post<ITag, ITag>("/api/tag", tag);
+  export function addTag(tagGroupId: number, tag: ITag): Promise<ITag> {
+    return Ajax.post<ITag, ITag>(`/api/tag/group/${tagGroupId}`, tag);
   }
-  export function updateTag(tag: ITag): Promise<ITag> {
-    return Ajax.put<ITag, ITag>("/api/tag", tag);
+  export function updateTag(tagGroupId: number, tag: ITag): Promise<ITag> {
+    return Ajax.put<ITag, ITag>(`/api/tag/group/${tagGroupId}`, tag);
   }
   export function deleteTag(tagId: number): Promise<void> {
     return Ajax.del(`/api/tag/${tagId}`);
   }
   export function getAllTags(): Promise<Array<ITag>> {
     return Ajax.get<Array<ITag>>("/api/tag/all");
+  }
+  export function getAllTagGroups(): Promise<Array<ITagGroup>> {
+    return Ajax.get<Array<ITagGroup>>("/api/tag/group/all");
+  }
+  export function addTagGroup(tagGroup: ITagGroup): Promise<ITagGroup> {
+    return Ajax.post<ITagGroup, ITagGroup>("/api/tag/group", tagGroup);
+  }
+  export function updateTagGroup(tagGroup: ITagGroup): Promise<ITagGroup> {
+    return Ajax.put<ITagGroup, ITagGroup>("/api/tag/group", tagGroup);
   }
 }

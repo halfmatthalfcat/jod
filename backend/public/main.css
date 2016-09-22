@@ -5,9 +5,18 @@ html, body {
     background-color: #E2CBAB;
 }
 
+thead {
+    border-bottom-color: #AB7345;
+}
+
+th {
+    color: #AB7345;
+}
+
 .card-common {
     background-color: #AB7345;
     color: white;
+    cursor: pointer;
 }
 
 .brand-logo {

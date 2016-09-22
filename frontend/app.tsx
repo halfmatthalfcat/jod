@@ -1,7 +1,6 @@
 /// <reference path="../typings/index.d.ts" />
 /// <reference path="./app.d.ts" />
 
-import "babel-polyfill";
 import {Toolbar} from "./components/toolbar";
 import {Login} from "./components/login";
 import {Home} from "./pages/home";
@@ -18,7 +17,7 @@ import {Router, Route, IndexRoute, browserHistory} from "react-router";
 $(document).ready(() => {
   ReactDOM.render(
     <Router history={ browserHistory }>
-      <Route path="/" component={ Toolbar }>
+      <Route path="/" component={ Toolbar } routeListener={ browserHistory.listen }>
         <IndexRoute component={ Home }/>
         <Route path="login/:token" component={ Login } />
         <Route path="users" component={ Users } />

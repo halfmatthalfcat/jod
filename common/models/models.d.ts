@@ -49,6 +49,13 @@ export interface ITag {
   tagId?: number;
   tagName: string;
   tagColor: string;
+  tagTextColor: string;
+}
+
+export interface ITagGroup {
+  tagGroupId?: number;
+  tagGroupName: string;
+  tags: Array<ITag>;
 }
 
 export interface IFullUser {

@@ -28,11 +28,31 @@ export namespace BudgetItemRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result.insertId) {
-                  conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
-                    if (err) throw err;
-                    else if (result2[0]) return res.json(result2[0]);
-                    else return res.status(500).send("Couldn't retrieve BudgetItem");
-                  });
+                  if(req.body.tags && req.body.tags.length > 0) {
+                    Promise.all(req.body.tags.map((tag) => {
+                      new Promise((resolve, reject) => {
+                        conn.query(
+                          `
+                            INSERT INTO TagMap
+                            (BudgetItemId, TagId)
+                            VALUES
+                            (?, ?)
+                          `,
+                          [result.insertId, tag.tagId],
+                          (err, result2) => {
+                            if (err) reject(err);
+                            else resolve();
+                          }
+                        )
+                      })
+                    })).then(() => {
+                      conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
+                        if (err) throw err;
+                        else if (result2[0]) return res.json(result2[0]);
+                        else return res.status(500).send("Couldn't retrieve BudgetItem");
+                      });
+                    }, () => { res.status(500).send("Error adding tags to new BudgetItem"); });
+                  } else res.sendStatus(200);
                 } else return res.status(500).send("BudgetItem not added.");
               }
             );
@@ -57,7 +77,7 @@ export namespace BudgetItemRoutes {
               (err, result) => {
                 if (err) throw err;
                 else if (result.affectedRows === 1) {
-                  conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [req.body.budgetItemId], (err, result2) => {
+                  conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
                     if (err) throw err;
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve BudgetItem");
@@ -104,11 +124,11 @@ export namespace BudgetItemRoutes {
         });
 
       router.route("/api/budget/item/:budgetItemId/tag/:tagId")
-        .get((req, res) => {
+        .post((req, res) => {
           connection(db, res, (conn) => {
             return conn.query(
               `
-                INSERT INTO Tags
+                INSERT INTO TagMap
                 (BudgetItemId, TagId)
                 VALUES
                 (?, ?)
@@ -125,7 +145,7 @@ export namespace BudgetItemRoutes {
           connection(db, res, (conn) => {
             return conn.query(
               `
-                DELETE FROM Tags
+                DELETE FROM TagMap
                 WHERE BudgetItemId = ? AND
                       TagId = ?
               `,

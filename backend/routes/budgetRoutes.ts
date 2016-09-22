@@ -113,28 +113,26 @@ export namespace BudgetRoutes {
               else {
                 Promise.all(result.map((budgetItem) => {
                   return new Promise<IBudgetItem>((resolve, reject) => {
-                    console.log(budgetItem);
-                    console.log(budgetItem.BudgetItemId);
                     conn.query(
                       `
                         SELECT  t.*
-                        FROM    TagMap as tm
-                        JOIN    Tag as t
-                        ON      tm.TagId = t.TagId
+                        FROM    Tag as t
+                        JOIN    TagMap as tm
+                        ON      t.TagId = tm.TagId
                         WHERE   tm.BudgetItemId = ?
                       `,
-                      [budgetItem.BudgetItemId],
+                      [budgetItem.budgetItemId],
                       (err, result2) => {
-                        console.log(result2);
                         if (err) reject(err);
                         else {
+                          console.log(result2);
                           budgetItem.tags = result2 as Array<ITag>;
                           resolve(budgetItem);
                         }
                       }
                     );
                   });
-                }).values()).then((budgetItems) => {
+                })).then((budgetItems) => {
                   return res.json(budgetItems);
                 }, (rejected) => { throw rejected; });
               }

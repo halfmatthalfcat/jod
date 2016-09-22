@@ -2,7 +2,7 @@
 /// <reference path="../../typings/index.d.ts" />
 
 import {IAccountsProps, IAccountsState} from "./pages";
-import {User, Budget} from "../util/api";
+import {User, BudgetApi} from "../util/api";
 import {IBudget, IFullUser} from "../../common/models/models";
 import {chunk} from "../util/helpers";
 import {BudgetCard} from "../components/budget/budgetCard";
@@ -44,7 +44,7 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
 
   private upsertBudget(budget: IBudget): void {
     if(budget.budgetId) {
-      Budget.updateBudget(budget).then(() => {
+      BudgetApi.updateBudget(budget).then(() => {
         User.getAllUsersFull().then((users) => {
           Promise.all<[IFullUser, Array<IBudget>]>(users.map((user) => {
             return new Promise((resolve, reject) => {
@@ -59,7 +59,7 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
         });
       });
     } else {
-      Budget.addBudget(budget).then(() => {
+      BudgetApi.addBudget(budget).then(() => {
         User.getAllUsersFull().then((users) => {
           Promise.all<[IFullUser, Array<IBudget>]>(users.map((user) => {
             return new Promise((resolve, reject) => {
@@ -77,7 +77,7 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
   }
 
   private deleteBudget(budget: IBudget): void {
-    Budget.deleteBudget(budget.budgetId).then(() => {
+    BudgetApi.deleteBudget(budget.budgetId).then(() => {
       User.getAllUsersFull().then((users) => {
         Promise.all<[IFullUser, Array<IBudget>]>(users.map((user) => {
           return new Promise((resolve, reject) => {

@@ -29,7 +29,8 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
   constructor(props: IToolbarProps) {
     super(props);
     this.state = {
-      showLogin: false
+      showLogin: false,
+      searchText: null
     };
   }
 
@@ -46,6 +47,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
       console.log("Not jwt token found.");
     }
     this.handleLogin();
+    this.props.route.routeListener(this.clearSearchOnRouteChange.bind(this));
   }
 
   private toggleLogin(): void {
@@ -71,17 +73,42 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
     });
   }
 
+  private searchListen(event: Event): void {
+    this.setState({ searchText: $(event.target).val() })
+  }
+
+  private clearSearchOnRouteChange(): void {
+    this.setState({ searchText: null });
+    $("#search").val("");
+  }
+
   public render() {
     return (
       <div style={ this.containerStyle }>
         <div className="navbar-fixed">
           <nav style={{ backgroundColor: "#7094DE" }}>
-            <div className="nav-wrapper">
-              <a href="/" className="brand-logo center">JOliverDecor</a>
+            <div
+              className="nav-wrapper"
+              onMouseEnter={() => {  this.setState({ showSearch: true, showLogin: false }); }}
+              onMouseLeave={() => {  this.setState({ showSearch: false, showLogin: false }); }}
+              style={{ display: "flex", flexFlow: "row nowrap", justifyContent: "flex-end" }}
+            >
+              {(() => {
+                if (this.state.showSearch || this.state.searchText) {
+                  return (
+                    <div className="input-field middle" style={{ width: "100%", marginRight: "15px" }}>
+                      <input id="search" type="search" onChange={ this.searchListen.bind(this) } required/>
+                      <label htmlFor="search"><i className="fa fa-search" /></label>
+                    </div>
+                  );
+                } else {
+                  return <a href="/" className="brand-logo center">JOliverDecor</a>;
+                }
+              })()}
               {(() => {
                 if (this.state.user) {
                   return(
-                    <ul className="right hide-on-med-and-down">
+                    <ul className="right hide-on-med-and-down" style={{ display: "flex", flexShrink: 0 }}>
                       <li style={{ marginRight: "15px" }}>Hi, { this.state.user.username }!</li>
                       <li><Link to="/users">Users</Link></li>
                       <li><Link to="/accounts">Accounts</Link></li>
@@ -90,7 +117,7 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                   );
                 } else {
                   return(
-                    <ul className="right hide-on-med-and-down">
+                    <ul className="right hide-on-med-and-down" style={{ display: "flex", flexShrink: 0 }}>
                       <li><a onClick={ this.toggleLogin.bind(this) }>Login</a></li>
                     </ul>
                   );
