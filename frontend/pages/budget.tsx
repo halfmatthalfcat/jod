@@ -3,9 +3,9 @@
 
 import {IBudgetProps, IBudgetState} from "./pages";
 import {BudgetRow} from "../components/budget/budgetRow";
-import {BudgetApi, Tag} from "../util/api";
+import {BudgetApi, BudgetItem, Tag} from "../util/api";
 import {BudgetHeader} from "../components/budget/budgetHeader";
-import {IBudgetItem} from "../../common/models/models";
+import {IBudgetItem, ITag} from "../../common/models/models";
 import {TagRow} from "../components/budget/tagRow";
 const moment = require("moment-timezone");
 
@@ -24,7 +24,6 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
       })
     });
-    $(".pp-wrapper").pushpin({ top: $(".budgetWrapper").offset().top });
   }
 
   private handleHeader(name: string): void {
@@ -72,6 +71,36 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     }
   }
 
+  private deleteItem(budgetItem: IBudgetItem): void {
+    BudgetItem.deleteBudgetItem(budgetItem.budgetItemId).then(() => {
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
+        })
+      });
+    });
+  }
+
+  private addTagMap(budgetItem: IBudgetItem, tag: ITag): void {
+    BudgetItem.addTagToBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
+        })
+      });
+    });
+  }
+
+  private deleteTagMap(budgetItem: IBudgetItem, tag: ITag): void {
+    BudgetItem.removeTagFromBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
+        })
+      });
+    });
+  }
+
   public render() {
     return (
       <div className="budgetWrapper" style={{ padding: "10px", display: "flex" }}>
@@ -97,23 +126,36 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
               />
+              <td />
             </tr>
             </thead>
             <tbody>
             {(() => {
               if (this.state.budgetItems) {
                 return this.state.budgetItems.reduce((acc, budgetItem) => {
-                  acc.push(<BudgetRow budgetItem={ budgetItem } />);
-                  acc.push(<TagRow tags={ budgetItem.tags } />);
+                  acc.push(
+                    <BudgetRow
+                      key={ `budgetRow${budgetItem.budgetItemId}` }
+                      budgetItem={ budgetItem }
+                      del={ this.deleteItem.bind(this, budgetItem) }
+                    />
+                  );
+                  acc.push(
+                    <TagRow
+                      key={ `tagRow${budgetItem.budgetItemId}` }
+                      budgetItemId={ budgetItem.budgetItemId }
+                      tags={ budgetItem.tags }
+                      tagGroups={ this.state.tagGroups }
+                      addTagMap={ this.addTagMap.bind(this, budgetItem) }
+                      delTagMap={ this.deleteTagMap.bind(this, budgetItem) }
+                    />
+                  );
                   return acc;
                 }, []);
               }
             })()}
             </tbody>
           </table>
-        </div>
-        <div className="ppWrapper" style={{ display: "flex" }}>
-          <div>Pushpin</div>
         </div>
       </div>
     );

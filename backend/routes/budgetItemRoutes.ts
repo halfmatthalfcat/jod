@@ -15,13 +15,14 @@ export namespace BudgetItemRoutes {
             return conn.query(
               `
                 INSERT INTO BudgetItem
-                (BudgetId, Description, TotalPrice, Notes)
+                (BudgetId, Description, Created, TotalPrice, Notes)
                 VALUES
-                (?, ?, ?, ?)
+                (?, ?, ?, ?, ?)
               `,
               [
                 req.body.budgetId,
                 req.body.description,
+                req.body.created,
                 req.body.totalPrice,
                 req.body.notes
               ],
@@ -65,19 +66,21 @@ export namespace BudgetItemRoutes {
                 UPDATE  BudgetItem
                 SET     Description = ?,
                         TotalPrice = ?,
+                        Created = ?,
                         Notes = ?
                 WHERE   BudgetItemId = ?
               `,
               [
                 req.body.description,
                 req.body.totalPrice,
+                req.body.created,
                 req.body.notes,
                 req.body.budgetItemId
               ],
               (err, result) => {
                 if (err) throw err;
                 else if (result.affectedRows === 1) {
-                  conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
+                  conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [req.body.budgetItemId], (err, result2) => {
                     if (err) throw err;
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve BudgetItem");
@@ -136,7 +139,7 @@ export namespace BudgetItemRoutes {
               [req.params.budgetItemId, req.params.tagId],
               (err, result) => {
                 if (err) throw err;
-                else return res.sendStatus(201);
+                else return res.json({});
               }
             );
           });

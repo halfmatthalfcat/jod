@@ -125,7 +125,6 @@ export namespace BudgetRoutes {
                       (err, result2) => {
                         if (err) reject(err);
                         else {
-                          console.log(result2);
                           budgetItem.tags = result2 as Array<ITag>;
                           resolve(budgetItem);
                         }

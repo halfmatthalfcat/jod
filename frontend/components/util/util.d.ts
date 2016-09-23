@@ -7,3 +7,7 @@ interface IEmptyCardProps {
 interface IFloatingActionProps {
   clicked: () => void;
 }
+
+interface JQuery {
+  dropit(): JQuery;
+}

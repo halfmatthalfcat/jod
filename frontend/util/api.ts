@@ -80,8 +80,8 @@ export namespace BudgetItem {
   export function deleteBudgetItem(budgetItemId: number): Promise<void> {
     return Ajax.del(`/api/budget/item/${budgetItemId}`);
   }
-  export function addTagToBudgetItem(budgetItemId: number, tagId: number): Promise<IBudgetItem> {
-    return Ajax.get<IBudgetItem>(`/api/budget/item/${budgetItemId}/tag/${tagId}`);
+  export function addTagToBudgetItem(budgetItemId: number, tagId: number): Promise<any> {
+    return Ajax.post<any, any>(`/api/budget/item/${budgetItemId}/tag/${tagId}`, {});
   }
   export function removeTagFromBudgetItem(budgetItemId: number, tagId: number): Promise<void> {
     return Ajax.del(`/api/budget/item/${budgetItemId}/tag/${tagId}`);

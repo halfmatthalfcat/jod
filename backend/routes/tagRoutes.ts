@@ -57,7 +57,6 @@ export namespace TagRoutes {
       router.route("/api/tag/group/:tagGroupId")
         .post((req, res) => {
           connection(db, res, (conn) => {
-            console.log(req.body);
             conn.query(
               `
                 INSERT INTO Tag
@@ -148,9 +147,8 @@ export namespace TagRoutes {
                 FROM    TagGroup
               `,
               (err, result) => {
-                console.log(result);
                 if (err) throw err;
-                else if (result && result.length > 1) {
+                else if (result && result.length > 0) {
                   Promise.all(result.map((tagGroup) => {
                     return new Promise((resolve, reject) => {
                       conn.query(
@@ -169,7 +167,6 @@ export namespace TagRoutes {
                       );
                     });
                   })).then((tagGroups) => {
-                    console.log(tagGroups);
                     res.json(tagGroups);
                   }, () => {
                     res.status(500).send("Couldn't get TagGroups");

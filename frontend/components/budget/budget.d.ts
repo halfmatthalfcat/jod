@@ -1,4 +1,4 @@
-import {IBudget, IFullUser, IBudgetItem, ITag} from "../../../common/models/models";
+import {IBudget, IFullUser, IBudgetItem, ITag, ITagGroup} from "../../../common/models/models";
 
 interface IBudgetCardProps {
   budget: IBudget;
@@ -15,8 +15,13 @@ interface IBudgetModalState {
   budget: IBudget;
 }
 
+interface IBudgetRowState {
+  budgetItem: IBudgetItem;
+}
+
 interface IBudgetRowProps {
-  budgetItem: IBudgetItem
+  budgetItem: IBudgetItem;
+  del: () => void;
 }
 
 interface IBudgetHeaderProps {
@@ -28,4 +33,12 @@ interface IBudgetHeaderProps {
 
 interface ITagRowProps {
   tags: Array<ITag>;
+  tagGroups: Array<ITagGroup>;
+  budgetItemId: number;
+  addTagMap: (tag: ITag) => void;
+  delTagMap: (tag: ITag) => void;
+}
+
+interface ITagModalProps {
+
 }
