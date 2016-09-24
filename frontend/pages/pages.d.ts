@@ -1,4 +1,4 @@
-import {IFullUser, IBudget, IBudgetItem, ITagGroup} from "../../common/models/models";
+import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag} from "../../common/models/models";
 
 interface IHomeProps {
 }
@@ -26,9 +26,18 @@ interface IUsersState {
 interface IBudgetProps {
   params: any;
 }
+interface IBudgetFilters {
+  tags?: Array<ITag>;
+  searchText?: string;
+  fromDateRange?: string;
+  toDateRange?: string;
+  fromTotalAmount?: number;
+  toTotalAmount?: number;
+}
 interface IBudgetState {
   budgetItems?: Array<IBudgetItem>;
   tagGroups?: Array<ITagGroup>;
   selectedHeader?: string;
   sortDirection?: string;
+  filters?: IBudgetFilters;
 }

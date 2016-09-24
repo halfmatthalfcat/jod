@@ -9,7 +9,9 @@ import {IBudgetItem, ITag} from "../../common/models/models";
 import {TagRow} from "../components/budget/tagRow";
 import {BudgetActions} from "../components/budget/budgetActions";
 import {BudgetItemModal} from "../components/budget/budgetItemModal";
+import {SortModal} from "../components/budget/sortModal";
 const moment = require("moment-timezone");
+const update = require("react-addons-update");
 
 class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
@@ -17,7 +19,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   constructor(props: IBudgetProps) {
     super(props);
-    this.state = {};
+    this.state = { filters: { tags: [] } };
   }
 
   public componentDidMount() {
@@ -26,6 +28,37 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
       })
     });
+  }
+
+  private resetBudget(): Promise<{}> {
+    return new Promise((resolve, reject) => {
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({
+            budgetItems: this.applyTagFilter(budgetItems),
+            tagGroups: tagGroups
+          });
+          resolve();
+        }, reject)
+      }, reject);
+    });
+  }
+
+  private applyTagFilter(budgetItems: Array<IBudgetItem>): Array<IBudgetItem> {
+    if(this.state.filters.tags.length > 0) {
+      return budgetItems.filter((budgetItem) => {
+        const r = budgetItem.tags
+          .map((t) => { return t.tagId; })
+          .reduce((acc, tagId) => {
+            if(this.state.filters.tags
+                .map((tg) => { return tg.tagId; })
+                .indexOf(tagId) === -1) return true;
+            else return acc;
+          }, false);
+        console.log(r);
+        return r;
+      });
+    } else return budgetItems;
   }
 
   private handleHeader(name: string): void {
@@ -73,44 +106,47 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     }
   }
 
+  private toggleTagFilter(tag: ITag): void {
+    if(this.state.filters.tags
+        .map((t) => { return t.tagId; })
+        .indexOf(tag.tagId) === -1) {
+      this.setState(update(this.state, {
+        filters: {
+          tags: {$push: [tag]}
+        }
+      }), () => { this.resetBudget(); });
+    } else {
+      this.setState(update(this.state, {
+        filters: {
+          tags: {$set: this.state.filters.tags.filter((t) => { return t.tagId !== tag.tagId; })}
+        }
+      }), () => { this.resetBudget(); })
+    }
+  }
+
   private addItem(budgetItem: IBudgetItem): void {
-    BudgetItem.addBudgetItem(budgetItem).then(() =>{
-      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-        Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
-          $("#budgetItemModal").closeModal();
-        })
+    BudgetItem.addBudgetItem(budgetItem).then(() => {
+      this.resetBudget().then(() => {
+        $("#budgetItemModal").closeModal();
       });
     });
   }
 
   private deleteItem(budgetItem: IBudgetItem): void {
     BudgetItem.deleteBudgetItem(budgetItem.budgetItemId).then(() => {
-      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-        Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
-        })
-      });
+      this.resetBudget();
     });
   }
 
   private addTagMap(budgetItem: IBudgetItem, tag: ITag): void {
     BudgetItem.addTagToBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
-      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-        Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
-        })
-      });
+      this.resetBudget();
     });
   }
 
   private deleteTagMap(budgetItem: IBudgetItem, tag: ITag): void {
     BudgetItem.removeTagFromBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
-      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-        Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
-        })
-      });
+      this.resetBudget();
     });
   }
 
@@ -175,6 +211,11 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           tagGroups={ this.state.tagGroups }
           budgetId={ this.props.params.budgetId }
           addBudgetItem={ this.addItem.bind(this) }
+        />
+        <SortModal
+          tagGroups={ this.state.tagGroups }
+          toggleFilter={ this.toggleTagFilter.bind(this) }
+          tagsFiltered={ this.state.filters.tags }
         />
       </div>
     );

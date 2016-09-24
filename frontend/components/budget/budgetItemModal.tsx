@@ -156,11 +156,11 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
                                   key={ `tag${tag.tagId}` }
                                   id={ JSON.stringify(tag) }
                                 >
-                            <span
-                              style={{ color: tag.tagTextColor }}
-                            >
-                              { tag.tagName }
-                            </span>
+                                  <span
+                                    style={{ color: tag.tagTextColor }}
+                                  >
+                                    { tag.tagName }
+                                  </span>
                                 </div>
                               );
                             });

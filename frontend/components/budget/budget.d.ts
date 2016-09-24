@@ -59,3 +59,13 @@ interface IBudgetItemModalState {
   notes?: string;
   tags?: Array<ITag>
 }
+
+interface ISortModalProps {
+  tagGroups: Array<ITagGroup>;
+  tagsFiltered: Array<ITag>;
+  toggleFilter: (tag: ITag) => void;
+}
+
+interface ISortModalState {
+  tags?: Array<ITag>;
+}

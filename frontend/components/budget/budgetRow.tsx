@@ -45,7 +45,7 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
   public render() {
     return (
       <tr>
-        <td style={this.tdStyle}>
+        <td style={{ margin: 0, width: "10%" }}>
           <input
             id={ `datepicker${this.props.budgetItem.budgetItemId}` }
             type="date"
@@ -54,7 +54,7 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
             defaultValue={ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().format("MM/DD/YYYY") }
           />
         </td>
-        <td style={this.tdStyle}>
+        <td style={{ margin: 0, width: "60%" }}>
           <input
             id={ `description${this.props.budgetItem.budgetItemId}` }
             defaultValue={ this.props.budgetItem.description }
@@ -90,12 +90,19 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
             }}
           />
         </td>
-        <td style={{ textAlign: "center", padding: 0 }}>
+        <td style={{ textAlign: "center", padding: 0, width: "20%" }}>
+          <a
+            className="wave-effect waves-light btn-flat"
+          >
+            Notes
+          </a>
           <a
             className="waves-effect waves-light btn-flat"
             style={{ verticalAlign: "middle" }}
             onClick={() => { this.props.del(); }}
-          >Delete</a>
+          >
+            Delete
+          </a>
         </td>
       </tr>
     );

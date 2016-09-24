@@ -13,7 +13,7 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
         data-position="left"
         data-delay="50"
         data-tooltip="New Budget Item"
-        onClick={() => { $("#budgetItemModal").openModal(); }}
+        onClick={(event) => { $("#budgetItemModal").openModal(); event.stopPropagation(); }}
         style={{ bottom: "45px", right: "24px" }}
       >
         <a className="btn-floating btn-large" style={{ backgroundColor: "#7094DE" }} >
@@ -53,6 +53,7 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
               data-position="left"
               data-delay="50"
               data-tooltip="Filter"
+              onClick={(event) => { $("#sortModal").openModal(); event.stopPropagation(); }}
             >
               <i className="fa fa-sort-alpha-asc" />
             </a>
