@@ -7,6 +7,8 @@ import {BudgetApi, BudgetItem, Tag} from "../util/api";
 import {BudgetHeader} from "../components/budget/budgetHeader";
 import {IBudgetItem, ITag} from "../../common/models/models";
 import {TagRow} from "../components/budget/tagRow";
+import {BudgetActions} from "../components/budget/budgetActions";
+import {BudgetItemModal} from "../components/budget/budgetItemModal";
 const moment = require("moment-timezone");
 
 class Budget extends React.Component<IBudgetProps, IBudgetState> {
@@ -71,6 +73,17 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     }
   }
 
+  private addItem(budgetItem: IBudgetItem): void {
+    BudgetItem.addBudgetItem(budgetItem).then(() =>{
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
+          $("#budgetItemModal").closeModal();
+        })
+      });
+    });
+  }
+
   private deleteItem(budgetItem: IBudgetItem): void {
     BudgetItem.deleteBudgetItem(budgetItem.budgetItemId).then(() => {
       BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
@@ -109,14 +122,14 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
             <thead>
             <tr>
               <BudgetHeader
-                name="description"
-                headerClicked={ this.handleHeader.bind(this, "description") }
+                name="date"
+                headerClicked={ this.handleHeader.bind(this, "date") }
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
               />
               <BudgetHeader
-                name="date"
-                headerClicked={ this.handleHeader.bind(this, "date") }
+                name="description"
+                headerClicked={ this.handleHeader.bind(this, "description") }
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
               />
@@ -157,6 +170,12 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
             </tbody>
           </table>
         </div>
+        <BudgetActions />
+        <BudgetItemModal
+          tagGroups={ this.state.tagGroups }
+          budgetId={ this.props.params.budgetId }
+          addBudgetItem={ this.addItem.bind(this) }
+        />
       </div>
     );
   }

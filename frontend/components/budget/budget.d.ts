@@ -42,3 +42,20 @@ interface ITagRowProps {
 interface ITagModalProps {
 
 }
+
+interface IBudgetActionProps {
+}
+
+interface IBudgetItemModalProps {
+  budgetId: number;
+  tagGroups: Array<ITagGroup>;
+  addBudgetItem: (budgetItem: IBudgetItem) => void;
+}
+interface IBudgetItemModalState {
+  budgetId?: number;
+  description?: string;
+  created?: string;
+  totalPrice?: number;
+  notes?: string;
+  tags?: Array<ITag>
+}

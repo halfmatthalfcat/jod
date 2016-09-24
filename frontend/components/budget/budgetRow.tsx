@@ -47,6 +47,15 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
       <tr>
         <td style={this.tdStyle}>
           <input
+            id={ `datepicker${this.props.budgetItem.budgetItemId}` }
+            type="date"
+            className="datepicker"
+            style={this.inputStyle}
+            defaultValue={ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().format("MM/DD/YYYY") }
+          />
+        </td>
+        <td style={this.tdStyle}>
+          <input
             id={ `description${this.props.budgetItem.budgetItemId}` }
             defaultValue={ this.props.budgetItem.description }
             type="text"
@@ -61,15 +70,6 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
                 })
               }
             }}
-          />
-        </td>
-        <td style={this.tdStyle}>
-          <input
-            id={ `datepicker${this.props.budgetItem.budgetItemId}` }
-            type="date"
-            className="datepicker"
-            style={this.inputStyle}
-            defaultValue={ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().format("MM/DD/YYYY") }
           />
         </td>
         <td style={{ display: "flex", alignItems: "baseline", paddingBottom: 0 }}>
