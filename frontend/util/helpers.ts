@@ -9,16 +9,18 @@ export function isNullOrEmpty(o: any): Boolean {
 }
 
 export function chunk<T>(array: Array<T>, chunkSize: number, shift?: number): Array<Array<T>> {
-  return array.reduce((acc, curr, i) => {
-    if ((i + 1) % chunkSize === 0) {
-      acc[acc.length - 1].push(curr);
-      acc.push([]);
-      return acc;
-    } else {
-      acc[acc.length - 1].push(curr);
-      return acc;
-    }
-  }, [[]] as Array<Array<T>>);
+  if (array && array.length > 0) {
+    return array.reduce((acc, curr, i) => {
+      if ((i + 1) % chunkSize === 0) {
+        acc[acc.length - 1].push(curr);
+        acc.push([]);
+        return acc;
+      } else {
+        acc[acc.length - 1].push(curr);
+        return acc;
+      }
+    }, [[]] as Array<Array<T>>);
+  } else return [[]] as Array<Array<T>>;
 }
 
 export namespace Ajax {

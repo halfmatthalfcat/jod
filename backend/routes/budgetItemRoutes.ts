@@ -53,7 +53,13 @@ export namespace BudgetItemRoutes {
                         else return res.status(500).send("Couldn't retrieve BudgetItem");
                       });
                     }, () => { res.status(500).send("Error adding tags to new BudgetItem"); });
-                  } else res.sendStatus(200);
+                  } else {
+                    conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
+                      if (err) throw err;
+                      else if (result2[0]) return res.json(result2[0]);
+                      else return res.status(500).send("Couldn't retrieve BudgetItem");
+                    });
+                  }
                 } else return res.status(500).send("BudgetItem not added.");
               }
             );
@@ -67,6 +73,7 @@ export namespace BudgetItemRoutes {
                 SET     Description = ?,
                         TotalPrice = ?,
                         Created = ?,
+                        Invoiced = ?,
                         Notes = ?
                 WHERE   BudgetItemId = ?
               `,
@@ -74,6 +81,7 @@ export namespace BudgetItemRoutes {
                 req.body.description,
                 req.body.totalPrice,
                 req.body.created,
+                req.body.invoiced,
                 req.body.notes,
                 req.body.budgetItemId
               ],

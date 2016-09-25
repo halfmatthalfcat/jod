@@ -25,6 +25,7 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
                data-position="left"
                data-delay="50"
                data-tooltip="Tags"
+               onClick={(event) => { $("#tagModal").openModal(); event.stopPropagation(); }}
             >
               <i className="fa fa-tags" />
             </a>

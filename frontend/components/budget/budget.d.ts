@@ -12,7 +12,7 @@ interface IBudgetModalProps {
   update: (budget: IBudget) => void;
 }
 interface IBudgetModalState {
-  budget: IBudget;
+  budget?: IBudget;
 }
 
 interface IBudgetRowState {
@@ -40,7 +40,14 @@ interface ITagRowProps {
 }
 
 interface ITagModalProps {
+  tagGroups: Array<ITagGroup>
+}
 
+interface ITagModalState {
+  tagText?: string;
+  tagColor?: string;
+  tagTextColor?: string;
+  tagGroups?: Array<ITagGroup>;
 }
 
 interface IBudgetActionProps {
@@ -64,6 +71,7 @@ interface ISortModalProps {
   tagGroups: Array<ITagGroup>;
   tagsFiltered: Array<ITag>;
   toggleFilter: (tag: ITag) => void;
+
 }
 
 interface ISortModalState {

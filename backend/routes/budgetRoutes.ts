@@ -75,7 +75,7 @@ export namespace BudgetRoutes {
             (err, result) => {
               if (err) throw err;
               else if (result[0]) return res.json(result[0]);
-              else res.stats(500).send("Budget not found");
+              else res.status(500).send("Budget not found");
             }
           );
         });

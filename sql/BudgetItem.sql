@@ -6,6 +6,7 @@ CREATE TABLE BudgetItem(
   budgetItemId INT AUTO_INCREMENT,
   budgetId INT NOT NULL,
   created DATETIME NOT NULL DEFAULT NOW(),
+  invoiced DATETIME,
   description VARCHAR(300) NOT NULL,
   totalPrice DECIMAL(7, 2) NOT NULL,
   notes VARCHAR(500),

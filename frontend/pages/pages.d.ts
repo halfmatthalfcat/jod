@@ -35,6 +35,7 @@ interface IBudgetFilters {
   toTotalAmount?: number;
 }
 interface IBudgetState {
+  budget?: IBudget;
   budgetItems?: Array<IBudgetItem>;
   tagGroups?: Array<ITagGroup>;
   selectedHeader?: string;

@@ -13,7 +13,7 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
     } else this.state = {
       budget: {
         userId: -1,
-        budgetName: ""
+        budgetName: "New Budget"
       }
     };
   }
@@ -34,12 +34,20 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
     Materialize.updateTextFields();
   }
 
+  private sendBudget(): void {
+    if(
+      this.state.budget.userId > -1
+    ) {
+      this.props.update(this.state.budget);
+    }
+  }
+
   public render() {
     return (
       <div
         id={ `budgetModal${this.props.budget ? this.props.budget.budgetId : "" }` }
         className="modal modal-fixed-footer"
-        style={{ height: "30%" }}
+        style={{ height: "60%" }}
       >
         <div className="modal-content">
           <h4>{ this.props.budget ? "Edit Budget" : "New Budget" }</h4>
@@ -48,6 +56,7 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
               <div className="row">
                 <div className="input-field col s6">
                   <select id={`budgetModalSelect${this.props.budget ? this.props.budget.budgetId : "" }`}>
+                    <option value="" disabled selected>Select A User</option>
                     {(() => {
                       return this.props.users.map((user) => {
                         if(user.user.userId === this.state.budget.userId) {
@@ -73,13 +82,17 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
                     id="budgetName"
                     type="text"
                     className="validate"
+                    pattern=".+"
                     defaultValue={
                       this.props.budget ? this.props.budget.budgetName : null
                     }
-                    onChange={(event) => { this.setState({ budget: update(this.state.budget, {
-                          budgetName: {$set: $(event.target).val()}
+                    onChange={(event) => {
+                      if(($(event.target)[0] as HTMLInputElement).checkValidity()) {
+                        this.setState({ budget: update(this.state.budget, {
+                            budgetName: {$set: $(event.target).val()}
+                          })
                         })
-                      })
+                      }
                     }}
                   />
                   <label htmlFor="budgetName">Budget Name</label>
@@ -90,7 +103,7 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
         </div>
         <div className="modal-footer">
           <a className="modal-action modal-close wave-effect btn-flat">Cancel</a>
-          <a className="modal-action wave-effect btn-flat" onClick={() => { this.props.update(this.state.budget); }}>Save</a>
+          <a className="modal-action wave-effect btn-flat" onClick={ this.sendBudget }>Save</a>
         </div>
       </div>
     );

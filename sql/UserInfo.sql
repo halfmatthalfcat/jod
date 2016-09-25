@@ -10,7 +10,7 @@ CREATE TABLE UserInfo(
   address1 VARCHAR(100),
   address2 VARCHAR(100),
   city VARCHAR(100),
-  state VARCHAR(2),
+  state VARCHAR(50),
   zipCode INT,
   PRIMARY KEY(userId),
   FOREIGN KEY(userId)

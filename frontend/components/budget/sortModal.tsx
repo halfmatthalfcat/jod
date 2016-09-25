@@ -35,37 +35,42 @@ class SortModal extends React.Component<ISortModalProps, {}> {
                 {(() => {
                   if(this.props.tagGroups) {
                     return this.props.tagGroups.reduce((acc, tagGroup) => {
-                      tagGroup.tags.forEach((tag) => {
-                        acc.push(
-                          <div
-                            className="chip"
-                            style={{
+                      if(tagGroup.tags) {
+                        tagGroup.tags.forEach((tag) => {
+                          acc.push(
+                            <div
+                              className="chip"
+                              style={{
                               backgroundColor: tag.tagColor,
                               opacity: this.tagSelected(tag) ? 1 : .5
                             }}
-                            key={ `sortChip${tag.tagId}` }
-                          >
-                            <span style={{ color: tag.tagTextColor }}>{ tag.tagName }</span>
-                            {(() => {
-                              if(this.tagSelected(tag)) {
-                                return <i
-                                  className="fa fa-check"
+                              key={ `sortChip${tag.tagId}` }
+                            >
+                              <span style={{ color: tag.tagTextColor }}>{ tag.tagName }</span>
+                              {(() => {
+                                if(this.tagSelected(tag)) {
+                                  return <i
+                                    className="fa fa-check"
+                                    style={{ color: tag.tagTextColor, marginLeft: "10px", cursor: "pointer" }}
+                                    onClick={() => { this.props.toggleFilter(tag); }}
+                                  />;
+                                } else return <i
+                                  className="fa fa-times"
                                   style={{ color: tag.tagTextColor, marginLeft: "10px", cursor: "pointer" }}
                                   onClick={() => { this.props.toggleFilter(tag); }}
                                 />;
-                              } else return <i
-                                className="fa fa-times"
-                                style={{ color: tag.tagTextColor, marginLeft: "10px", cursor: "pointer" }}
-                                onClick={() => { this.props.toggleFilter(tag); }}
-                              />;
-                            })()}
-                          </div>
-                        );
-                      });
+                              })()}
+                            </div>
+                          );
+                        });
+                      }
                       return acc;
                     }, []);
                   }
                 })()}
+              </div>
+              <div style={{ height: "200px", padding: "10px" }}>
+
               </div>
             </div>
           </div>

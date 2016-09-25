@@ -10,6 +10,7 @@ import {TagRow} from "../components/budget/tagRow";
 import {BudgetActions} from "../components/budget/budgetActions";
 import {BudgetItemModal} from "../components/budget/budgetItemModal";
 import {SortModal} from "../components/budget/sortModal";
+import {TagModal} from "../components/budget/tagModal";
 const moment = require("moment-timezone");
 const update = require("react-addons-update");
 
@@ -23,10 +24,12 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
   }
 
   public componentDidMount() {
-    BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-      Tag.getAllTagGroups().then((tagGroups) => {
-        this.setState({ budgetItems: budgetItems, tagGroups: tagGroups });
-      })
+    BudgetApi.getBudget(this.props.params.budgetId).then((budget) => {
+      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+        Tag.getAllTagGroups().then((tagGroups) => {
+          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups, budget: budget });
+        })
+      });
     });
   }
 
@@ -37,8 +40,9 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           this.setState({
             budgetItems: this.applyTagFilter(budgetItems),
             tagGroups: tagGroups
+          }, () => {
+            resolve();
           });
-          resolve();
         }, reject)
       }, reject);
     });
@@ -126,9 +130,10 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   private addItem(budgetItem: IBudgetItem): void {
     BudgetItem.addBudgetItem(budgetItem).then(() => {
+      console.log("In add item block");
       this.resetBudget().then(() => {
         $("#budgetItemModal").closeModal();
-      });
+      }, (rejection) => { console.log(rejection); });
     });
   }
 
@@ -175,7 +180,13 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
               />
-              <td />
+              {(() => {
+                if(this.state.budget) {
+                  return (
+                    <td>{ this.state.budget.budgetName }</td>
+                  );
+                }
+              })()}
             </tr>
             </thead>
             <tbody>
@@ -216,6 +227,9 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           tagGroups={ this.state.tagGroups }
           toggleFilter={ this.toggleTagFilter.bind(this) }
           tagsFiltered={ this.state.filters.tags }
+        />
+        <TagModal
+          tagGroups={ this.state.tagGroups }
         />
       </div>
     );

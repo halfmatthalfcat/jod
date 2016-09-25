@@ -102,11 +102,13 @@ export namespace UserInfoRoutes {
               req.body.phone || null
             ],
             (err, result) => {
+              console.log(result);
               if (err) throw err;
-              else if (result.affectedRows > 1) {
+              else if (result.affectedRows > 0) {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
+                  console.log(result2);
                   if (err) throw err;
-                  else if (result2[0]) return res.json(JSON.stringify(result2[0]));
+                  else if (result2[0]) return res.json(result2[0]);
                   else return res.status(500).send("UserInfo not updated");
                 });
               }
