@@ -18,6 +18,13 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   public state: IBudgetState;
 
+  private budgetTitleStyle = {
+    display: "flex",
+    justifyContent: "center",
+    fontSize: "24px",
+    fontWeight: "bold"
+  };
+
   constructor(props: IBudgetProps) {
     super(props);
     this.state = { filters: { tags: [] } };
@@ -33,18 +40,14 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     });
   }
 
-  private resetBudget(): Promise<{}> {
-    return new Promise((resolve, reject) => {
-      BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
-        Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({
-            budgetItems: this.applyTagFilter(budgetItems),
-            tagGroups: tagGroups
-          }, () => {
-            resolve();
-          });
-        }, reject)
-      }, reject);
+  private resetBudget(): Promise<void> {
+    return BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
+      Tag.getAllTagGroups().then((tagGroups) => {
+        this.setState({
+          budgetItems: this.applyTagFilter(budgetItems),
+          tagGroups: tagGroups
+        });
+      });
     });
   }
 
@@ -130,7 +133,6 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   private addItem(budgetItem: IBudgetItem): void {
     BudgetItem.addBudgetItem(budgetItem).then(() => {
-      console.log("In add item block");
       this.resetBudget().then(() => {
         $("#budgetItemModal").closeModal();
       }, (rejection) => { console.log(rejection); });
@@ -145,12 +147,6 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   private addTagMap(budgetItem: IBudgetItem, tag: ITag): void {
     BudgetItem.addTagToBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
-      this.resetBudget();
-    });
-  }
-
-  private updateTagGroup(tagGroupId: number, tagId: number): void {
-    Tag.updateTagToTagGroup(tagGroupId, tagId).then(() => {
       this.resetBudget();
     });
   }
@@ -189,7 +185,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
               {(() => {
                 if(this.state.budget) {
                   return (
-                    <td>{ this.state.budget.budgetName }</td>
+                    <td style={ this.budgetTitleStyle }>{ `${this.state.budget.budgetName} Budget` }</td>
                   );
                 }
               })()}
@@ -223,7 +219,9 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
             </tbody>
           </table>
         </div>
-        <BudgetActions />
+        <BudgetActions
+          resetBudget={ this.resetBudget.bind(this) }
+        />
         <BudgetItemModal
           tagGroups={ this.state.tagGroups }
           budgetId={ this.props.params.budgetId }
@@ -236,7 +234,6 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         />
         <TagModal
           tagGroups={ this.state.tagGroups }
-          updateTagGroup={ this.updateTagGroup.bind(this) }
         />
       </div>
     );

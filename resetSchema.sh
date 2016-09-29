@@ -7,4 +7,3 @@ mysql -u jod -pjod -h 192.168.99.100 jod < ./sql/TagGroup.sql
 mysql -u jod -pjod -h 192.168.99.100 jod < ./sql/TagGroupMap.sql
 mysql -u jod -pjod -h 192.168.99.100 jod < ./sql/User.sql
 mysql -u jod -pjod -h 192.168.99.100 jod < ./sql/UserInfo.sql
-mysql -u jod -pjod -h 192.168.99.100 jod < ./sql/trgAddTagToGroup.sql

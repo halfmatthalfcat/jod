@@ -30,7 +30,7 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
         animation: 150,
         draggable: ".chip",
         group: "tagGroup",
-        onAdd: (event) => { this.props.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
+        onAdd: (event) => { this.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
       })
     });
   }
@@ -41,7 +41,7 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
         animation: 150,
         draggable: ".chip",
         group: "tagGroup",
-        onAdd: (event) => { this.props.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
+        onAdd: (event) => { this.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
       })
     });
   }
@@ -63,6 +63,27 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
       this.setState(update(this.state, {
         tagGroups: {$push: [tagGroup]}
       }));
+    })
+  }
+
+  private updateTagGroup(tagGroupId: number, tagId: number): void {
+    Tag.updateTagToTagGroup(tagGroupId, tagId).then(() => {
+      Tag.getAllTagGroups().then((tagGroups) => {
+        this.setState({ tagGroups: tagGroups })
+      })
+    });
+  }
+
+  private addTag(): void {
+    // 1 = unsorted
+    Tag.addTag(1, {
+      tagName: this.state.tagText,
+      tagColor: this.state.tagColor,
+      tagTextColor: this.state.tagTextColor
+    }).then((tag) => {
+      Tag.getAllTagGroups().then((tagGroups) => {
+        this.setState({ tagGroups: tagGroups })
+      })
     })
   }
 
@@ -148,6 +169,7 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
                   <a
                     className="wave-effect waves-light btn-flat"
                     style={{ float: "right" }}
+                    onClick={() => { this.addTag(); }}
                   >
                     Create
                   </a>
@@ -186,7 +208,6 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
                 return (
                   <div className="row">
                     {(() => {
-                      console.log(tagGroups);
                       return tagGroups.map((tagGroup) => {
                         return(
                           <div className="col s3">
@@ -197,7 +218,7 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
                             >
                               <span
                                 className="card-title"
-                                style={{ marginBottom: "10px", flexBasis: "100%" }}
+                                style={{ marginBottom: "10px", flexBasis: "100%", fontSize: "16px" }}
                               >
                                 { tagGroup.tagGroupName }
                               </span>
