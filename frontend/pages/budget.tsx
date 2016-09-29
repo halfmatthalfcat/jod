@@ -149,6 +149,12 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     });
   }
 
+  private updateTagGroup(tagGroupId: number, tagId: number): void {
+    Tag.updateTagToTagGroup(tagGroupId, tagId).then(() => {
+      this.resetBudget();
+    });
+  }
+
   private deleteTagMap(budgetItem: IBudgetItem, tag: ITag): void {
     BudgetItem.removeTagFromBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
       this.resetBudget();
@@ -230,6 +236,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         />
         <TagModal
           tagGroups={ this.state.tagGroups }
+          updateTagGroup={ this.updateTagGroup.bind(this) }
         />
       </div>
     );

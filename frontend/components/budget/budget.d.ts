@@ -40,7 +40,8 @@ interface ITagRowProps {
 }
 
 interface ITagModalProps {
-  tagGroups: Array<ITagGroup>
+  tagGroups: Array<ITagGroup>;
+  updateTagGroup: (budgetItemId: number, tagId: number) => void;
 }
 
 interface ITagModalState {

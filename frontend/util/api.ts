@@ -113,4 +113,7 @@ export namespace Tag {
   export function updateTagGroup(tagGroup: ITagGroup): Promise<ITagGroup> {
     return Ajax.put<ITagGroup, ITagGroup>("/api/tag/group", tagGroup);
   }
+  export function updateTagToTagGroup(tagGroupId: number, tagId: number): Promise<any> {
+    return Ajax.put<any, any>(`/api/tag/group/${tagGroupId}/tag/${tagId}`, {});
+  }
 }

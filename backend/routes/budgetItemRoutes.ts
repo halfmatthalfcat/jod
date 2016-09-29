@@ -27,7 +27,7 @@ export namespace BudgetItemRoutes {
                 req.body.notes
               ],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.insertId) {
                   if(req.body.tags && req.body.tags.length > 0) {
                     Promise.all(req.body.tags.map((tag) => {
@@ -48,14 +48,14 @@ export namespace BudgetItemRoutes {
                       })
                     })).then(() => {
                       conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
-                        if (err) throw err;
+                        if (err) res.status(500).send(err);
                         else if (result2[0]) return res.json(result2[0]);
                         else return res.status(500).send("Couldn't retrieve BudgetItem");
                       });
                     }, () => { res.status(500).send("Error adding tags to new BudgetItem"); });
                   } else {
                     conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [result.insertId], (err, result2) => {
-                      if (err) throw err;
+                      if (err) res.status(500).send(err);
                       else if (result2[0]) return res.json(result2[0]);
                       else return res.status(500).send("Couldn't retrieve BudgetItem");
                     });
@@ -86,10 +86,10 @@ export namespace BudgetItemRoutes {
                 req.body.budgetItemId
               ],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) {
                   conn.query(`SELECT * FROM BudgetItem WHERE BudgetItemId = ?`, [req.body.budgetItemId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve BudgetItem");
                   });
@@ -110,7 +110,7 @@ export namespace BudgetItemRoutes {
               `,
               [req.params.budgetItemId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result[0]) return res.json(result[0]);
                 else return res.status(500).send("BudgetItem not found.");
               }
@@ -126,7 +126,7 @@ export namespace BudgetItemRoutes {
               `,
               [req.params.budgetItemId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) return res.sendStatus(201);
                 else return res.status(500).send("BudgetItem not found.");
               }
@@ -146,7 +146,7 @@ export namespace BudgetItemRoutes {
               `,
               [req.params.budgetItemId, req.params.tagId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else return res.json({});
               }
             );
@@ -162,7 +162,7 @@ export namespace BudgetItemRoutes {
               `,
               [req.params.budgetItemId, req.params.tagId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) return res.sendStatus(200);
                 else return res.status(500).send("Tag/BudgetItem not found");
               }

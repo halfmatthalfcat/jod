@@ -1,0 +1,11 @@
+DELIMITER //
+CREATE TRIGGER trgAddTagToGroup
+AFTER INSERT ON Tag
+FOR EACH ROW
+BEGIN
+  INSERT INTO TagGroupMap
+  (TagGroupId, TagId)
+  VALUES
+  (1, NEW.TagId);
+END//
+DELIMITER ;

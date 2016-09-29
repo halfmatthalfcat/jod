@@ -29,7 +29,7 @@ export namespace AppRoutes {
                 `,
                   [jwtResult.sub],
                   (err, result) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result[0]) return res.json(result[0]);
                     else return res.status(500).send("User not found.");
                   }
@@ -56,10 +56,10 @@ export namespace AppRoutes {
               `,
               [req.params.email],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result[0].exists === 1) {
                   conn.query(`SELECT * FROM User WHERE Email LIKE ?`, [req.params.email], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) {
                       mailer
                         .sendLoginMail(result2[0] as IUser)

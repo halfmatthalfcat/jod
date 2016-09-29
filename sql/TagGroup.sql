@@ -7,3 +7,6 @@ CREATE TABLE TagGroup(
   tagGroupName VARCHAR(100) NOT NULL,
   PRIMARY KEY(tagGroupId)
 ) ENGINE = INNODB DEFAULT CHARSET=utf8;
+
+INSERT INTO TagGroup
+(tagGroupName) VALUES ("Unsorted");

@@ -11,8 +11,7 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
 
   private cardStyle = {
     padding: "10px",
-    display: "flex",
-    flexFlow: "row wrap"
+    height: "200px"
   };
 
   constructor(props: ITagModalProps) {
@@ -26,7 +25,25 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
   }
 
   public componentDidMount(): void {
+    this.state.tagGroups.forEach((tagGroup) => {
+      Sortable.create(document.getElementById(`cardModalTagGroup${tagGroup.tagGroupId}`), {
+        animation: 150,
+        draggable: ".chip",
+        group: "tagGroup",
+        onAdd: (event) => { this.props.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
+      })
+    });
+  }
 
+  public componentDidUpdate(): void {
+    this.state.tagGroups.forEach((tagGroup) => {
+      Sortable.create(document.getElementById(`cardModalTagGroup${tagGroup.tagGroupId}`), {
+        animation: 150,
+        draggable: ".chip",
+        group: "tagGroup",
+        onAdd: (event) => { this.props.updateTagGroup(tagGroup.tagGroupId, parseInt($(event.item).data("id"))); }
+      })
+    });
   }
 
   public componentWillReceiveProps(newProps: ITagModalProps): void {
@@ -113,7 +130,10 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
             </div>
             <div className="row">
               <div className="col s12">
-                <div className="card-panel">
+                <div
+                  className="card-panel"
+                  id="newTagArea"
+                >
                   <span className="card-title">New Tag Preview</span>
                   <div
                     className="chip"
@@ -125,6 +145,12 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
                       { this.state.tagText }
                     </span>
                   </div>
+                  <a
+                    className="wave-effect waves-light btn-flat"
+                    style={{ float: "right" }}
+                  >
+                    Create
+                  </a>
                 </div>
               </div>
             </div>
@@ -164,18 +190,23 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
                       return tagGroups.map((tagGroup) => {
                         return(
                           <div className="col s3">
-                            <div className="card" style={ this.cardStyle }>
+                            <div
+                              className="card"
+                              style={ this.cardStyle }
+                              id={ `cardModalTagGroup${tagGroup.tagGroupId}` }
+                            >
                               <span
                                 className="card-title"
                                 style={{ marginBottom: "10px", flexBasis: "100%" }}
                               >
                                 { tagGroup.tagGroupName }
                               </span>
+                              <hr />
                               {(() => {
                                 if (tagGroup.tags) {
                                   return tagGroup.tags.map((tag) => {
                                     return (
-                                      <div className="chip" style={{ backgroundColor: tag.tagColor }}>
+                                      <div className="chip" style={{ backgroundColor: tag.tagColor }} data-id={ tag.tagId }>
                                         <span style={{ color: tag.tagTextColor }}>{ tag.tagName }</span>
                                         <i className="fa fa-times" style={{ color: tag.tagTextColor, marginLeft: "5px" }} />
                                       </div>

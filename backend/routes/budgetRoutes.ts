@@ -22,10 +22,10 @@ export namespace BudgetRoutes {
             `,
             [req.body.userId, req.body.budgetName],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.insertId) {
                 conn.query(`SELECT * FROM Budget WHERE BudgetId = ?`, [result.insertId], (err, result2) => {
-                  if (err) throw err;
+                  if (err) res.status(500).send(err);
                   else if (result2[0]) return res.json(result2[0]);
                   else return res.status(500).send("Couldn't retrieve BudgetItem");
                 });
@@ -49,10 +49,10 @@ export namespace BudgetRoutes {
               req.body.budgetId
             ],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) {
                 conn.query(`SELECT * FROM Budget WHERE BudgetId = ?`, [req.body.budgetId], (err, result2) => {
-                  if (err) throw err;
+                  if (err) res.status(500).send(err);
                   else if (result2[0]) return res.json(result2[0]);
                   else res.status(500).send("Budget not found.");
                 });
@@ -73,7 +73,7 @@ export namespace BudgetRoutes {
             `,
             [req.params.budgetId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result[0]) return res.json(result[0]);
               else res.status(500).send("Budget not found");
             }
@@ -90,7 +90,7 @@ export namespace BudgetRoutes {
             `,
             [req.params.budgetId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) return res.sendStatus(200);
               else return res.status(500).send("Budget not found");
             }
@@ -109,7 +109,7 @@ export namespace BudgetRoutes {
             `,
             [req.params.budgetId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else {
                 Promise.all(result.map((budgetItem) => {
                   return new Promise<IBudgetItem>((resolve, reject) => {

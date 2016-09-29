@@ -42,10 +42,10 @@ export namespace UserInfoRoutes {
               req.body.zipCode
             ],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
-                  if (err) throw err;
+                  if (err) res.status(500).send(err);
                   else if (result2[0]) return res.json(result2[0]);
                   else return res.status(500).send("UserInfo not added");
                 });
@@ -103,11 +103,11 @@ export namespace UserInfoRoutes {
             ],
             (err, result) => {
               console.log(result);
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows > 0) {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [req.body.userId], (err, result2) => {
                   console.log(result2);
-                  if (err) throw err;
+                  if (err) res.status(500).send(err);
                   else if (result2[0]) return res.json(result2[0]);
                   else return res.status(500).send("UserInfo not updated");
                 });
@@ -128,7 +128,7 @@ export namespace UserInfoRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result[0]) return res.json(result[0]);
               else return res.status(500).send("User does not exist.");
             }
@@ -144,7 +144,7 @@ export namespace UserInfoRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) return res.sendStatus(200);
               else res.status(500).send("User does not exist.");
             }

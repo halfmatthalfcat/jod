@@ -20,10 +20,10 @@ export namespace TagRoutes {
               `,
               [req.body.tagGroupName],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.insertId) {
                   conn.query(`SELECT * FROM TagGroup WHERE TagGroupId = ?`, [result.insertId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve TagGroup.");
                   });
@@ -42,10 +42,10 @@ export namespace TagRoutes {
               `,
               [req.body.tagGroupName, req.body.tagGroupId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) {
                   conn.query(`SELECT * FROM TagGroup WHERE TagGroupId = ?`, [req.body.tagGroupId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve TagGroup.");
                   });
@@ -54,6 +54,32 @@ export namespace TagRoutes {
             )
           });
         });
+    
+      router.route("/api/tag")
+        .post((req, res) => {
+          connection(db, res, (conn) => {
+            conn.query(
+              `
+                INSERT INTO Tag
+                (TagName, TagColor, TagTextColor)
+                VALUES
+                (?, ?, ?)
+              `,
+              [req.body.tagName, req.body.tagColor, req.body.tagTextColor],
+              (err, result) => {
+                if (err) res.status(500).send(err);
+                else if (result.insertId) {
+                  conn.query(`SELECT * FROM Tag WHERE TagId = ?`, [result.insertId], (err, result2) => {
+                    if (err) res.status(500).send(err);
+                    else if (result2[0]) res.json(result2[0]);
+                    else res.status(500).send("Couldn't retrieve tag.")
+                  })
+                }
+              }
+            )
+          })
+        });
+    
       router.route("/api/tag/group/:tagGroupId")
         .post((req, res) => {
           connection(db, res, (conn) => {
@@ -66,7 +92,7 @@ export namespace TagRoutes {
               `,
               [req.body.tagName, req.body.tagColor, req.body.tagTextColor],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.insertId) {
                   conn.query(
                     `
@@ -77,10 +103,10 @@ export namespace TagRoutes {
                     `,
                     [req.params.tagGroupId, result.insertId],
                     (err, result2) => {
-                      if (err) throw err;
+                      if (err) res.status(500).send(err);
                       else if (result2.affectedRows === 1) {
                         conn.query(`SELECT * FROM Tag WHERE TagId = ?`, [result.insertId], (err, result3) => {
-                          if (err) throw err;
+                          if (err) res.status(500).send(err);
                           else if (result3[0]) return res.json(result3[0]);
                           else return res.status(500).send("Couldn't retrieve Tag.");
                         });
@@ -109,10 +135,10 @@ export namespace TagRoutes {
                 req.body.tagId
               ],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) {
                   conn.query(`SELECT * FROM Tag WHERE TagId = ?`, [req.body.tagId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("Couldn't retrieve Tag.");
                   });
@@ -120,6 +146,24 @@ export namespace TagRoutes {
               }
             );
           });
+        });
+
+      router.route("/api/tag/group/:tagGroupId/tag/:tagId")
+        .put((req, res) => {
+          connection(db, res, (conn) => {
+            return conn.query(
+              `
+                UPDATE TagGroupMap
+                SET    TagGroupId = ?
+                WHERE  TagId = ?
+              `,
+              [req.params.tagGroupId, req.params.tagId],
+              (err, result) => {
+                if (err) res.status(500).send(err);
+                else return res.json({});
+              }
+            )
+          })
         });
 
       router.route("/api/tag/all")
@@ -131,7 +175,7 @@ export namespace TagRoutes {
                 FROM    Tag
               `,
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else return res.json(result);
               }
             );
@@ -147,7 +191,7 @@ export namespace TagRoutes {
                 FROM    TagGroup
               `,
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result && result.length > 0) {
                   Promise.all(result.map((tagGroup) => {
                     return new Promise((resolve, reject) => {
@@ -182,7 +226,7 @@ export namespace TagRoutes {
           connection(db, res, (conn) => {
             conn.query(
               `SELECT * FROM Tag WHERE TagId = ?`, [req.params.tagId], (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result[0]) return res.json(result[0]);
                 else return res.status(500).send("Tag not found.");
               });
@@ -197,7 +241,7 @@ export namespace TagRoutes {
               `,
               [req.params.tagId],
               (err, result) => {
-                if (err) throw err;
+                if (err) res.status(500).send(err);
                 else if (result.affectedRows === 1) return res.sendStatus(200);
                 else return res.status(500).send("Tag not found.");
               }

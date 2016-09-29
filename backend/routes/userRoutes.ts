@@ -23,11 +23,11 @@ export namespace UserRoutes {
               `,
             [req.body.email, req.body.username],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.insertId) {
                 conn.query(
                   `SELECT * FROM User WHERE UserId = ?`, [result.insertId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("User not added.");
                   }
@@ -48,11 +48,11 @@ export namespace UserRoutes {
             `,
             [req.body.email, req.body.username, req.body.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) {
                 conn.query(
                   `SELECT * FROM User WHERE UserId = ?`, [req.body.userId], (err, result2) => {
-                    if (err) throw err;
+                    if (err) res.status(500).send(err);
                     else if (result2[0]) return res.json(result2[0]);
                     else return res.status(500).send("User not added.");
                   }
@@ -71,7 +71,7 @@ export namespace UserRoutes {
               SELECT * FROM User WHERE Active = 1
             `,
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else return res.json(result);
             }
           );
@@ -82,11 +82,11 @@ export namespace UserRoutes {
       .get((req, res) => {
         connection(db, res, (conn) => {
           conn.query(`SELECT * FROM User WHERE Active = 1`, (err, result) => {
-            if (err) throw err;
+            if (err) res.status(500).send(err);
             else Promise.all(result.map((user) => {
               return new Promise((resolve, reject) => {
                 conn.query(`SELECT * FROM UserInfo WHERE UserId = ?`, [user.userId], (err, result2) => {
-                  if (err) throw err;
+                  if (err) res.status(500).send(err);
                   else if (result2[0]) resolve({ user: user, userInfo: result2[0] as UserInfo } as FullUser);
                   else resolve({ user: user, userInfo: {} as UserInfo} as FullUser);
                 });
@@ -112,7 +112,7 @@ export namespace UserRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result[0]) return res.json(result[0]);
               else return res.status(500).send("User does not exist.");
             }
@@ -129,7 +129,7 @@ export namespace UserRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else if (result.affectedRows === 1) return res.sendStatus(200);
               else return res.status(500).send("User does not exist.");
             }
@@ -149,7 +149,7 @@ export namespace UserRoutes {
             `,
             [req.params.userId],
             (err, result) => {
-              if (err) throw err;
+              if (err) res.status(500).send(err);
               else return res.json(result);
             }
           );
