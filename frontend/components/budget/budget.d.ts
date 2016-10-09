@@ -22,6 +22,8 @@ interface IBudgetRowState {
 interface IBudgetRowProps {
   budgetItem: IBudgetItem;
   del: () => void;
+  addInvoiceItem: () => void;
+  removeInvoiceItem: () => void;
 }
 
 interface IBudgetHeaderProps {
@@ -52,6 +54,8 @@ interface ITagModalState {
 
 interface IBudgetActionProps {
   resetBudget: () => void;
+  generateBudget: () => void;
+  generateInvoice: () => void;
 }
 
 interface IBudgetItemModalProps {

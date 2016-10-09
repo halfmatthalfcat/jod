@@ -11,6 +11,7 @@ import {BudgetActions} from "../components/budget/budgetActions";
 import {BudgetItemModal} from "../components/budget/budgetItemModal";
 import {SortModal} from "../components/budget/sortModal";
 import {TagModal} from "../components/budget/tagModal";
+import {saveAs} from "file-saver";
 const moment = require("moment-timezone");
 const update = require("react-addons-update");
 
@@ -27,7 +28,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   constructor(props: IBudgetProps) {
     super(props);
-    this.state = { filters: { tags: [] } };
+    this.state = { filters: { tags: [] }, invoiceItems: [] };
   }
 
   public componentDidMount() {
@@ -131,6 +132,20 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     }
   }
 
+  private addInvoiceItem(budgetItem: IBudgetItem): void {
+    this.setState(update(this.state, {
+      invoiceItems: {$push: [budgetItem]}
+    }));
+  }
+
+  private removeInvoiceItem(budgetItem: IBudgetItem): void {
+    this.setState(update(this.state, {
+      invoiceItems: {$set: this.state.invoiceItems.filter((invoiceItem) => {
+        return invoiceItem.budgetItemId !== budgetItem.budgetItemId;
+      })}
+    }));
+  }
+
   private addItem(budgetItem: IBudgetItem): void {
     BudgetItem.addBudgetItem(budgetItem).then(() => {
       this.resetBudget().then(() => {
@@ -153,6 +168,20 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   private deleteTagMap(budgetItem: IBudgetItem, tag: ITag): void {
     BudgetItem.removeTagFromBudgetItem(budgetItem.budgetItemId, tag.tagId).then(() => {
+      this.resetBudget();
+    });
+  }
+
+  private generateBudget(): void {
+    BudgetApi.generateBudget(this.state.budget.budgetId, this.state.budgetItems).then((pdf) => {
+      saveAs(pdf, `${this.state.budget.budgetName}_BUDGET_${moment().local().format("MM/DD/YYYY")}`);
+      this.resetBudget();
+    });
+  }
+
+  private generateInvoice(): void {
+    BudgetApi.generateInvoice(this.state.budget.budgetId, this.state.invoiceItems).then((pdf) => {
+      saveAs(pdf, `${this.state.budget.budgetName}_INVOICE_${moment().local().format("MM/DD/YYYY")}`);
       this.resetBudget();
     });
   }
@@ -200,6 +229,8 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
                       key={ `budgetRow${budgetItem.budgetItemId}` }
                       budgetItem={ budgetItem }
                       del={ this.deleteItem.bind(this, budgetItem) }
+                      addInvoiceItem={ this.addInvoiceItem.bind(this, budgetItem) }
+                      removeInvoiceItem={ this.removeInvoiceItem.bind(this, budgetItem) }
                     />
                   );
                   acc.push(
@@ -221,6 +252,8 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         </div>
         <BudgetActions
           resetBudget={ this.resetBudget.bind(this) }
+          generateBudget={ this.generateBudget.bind(this) }
+          generateInvoice={ this.generateInvoice.bind(this) }
         />
         <BudgetItemModal
           tagGroups={ this.state.tagGroups }

@@ -12,6 +12,7 @@
   },
   "globalDependencies": {
     "aws-sdk": "registry:dt/aws-sdk#0.0.0+20160927141703",
+    "filesaver": "registry:dt/filesaver#0.0.0+20160622185141",
     "jquery": "registry:dt/jquery#1.10.0+20160908203239",
     "jquery.datatables": "registry:dt/jquery.datatables#1.9.4+20160317120654",
     "jwt-simple": "registry:dt/jwt-simple#0.5.0+20160401095215",

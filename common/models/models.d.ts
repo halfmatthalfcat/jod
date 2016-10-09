@@ -18,6 +18,7 @@ export interface IBudgetItem {
   budgetItemId?: number;
   budgetId: number;
   created: string;
+  invoiced: string;
   description: string;
   totalPrice: number;
   notes: string;

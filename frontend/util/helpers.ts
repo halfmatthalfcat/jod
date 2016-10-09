@@ -114,4 +114,26 @@ export namespace Ajax {
     });
   }
 
+  export function download<A>(
+    url: String,
+    body: A,
+    params?: Map<String, String>
+  ): Promise<Blob> {
+    return new Promise<Blob>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open("POST", `${url}${buildParams(params)}`, true);
+      xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+      xhr.responseType = "blob";
+      xhr.send(JSON.stringify(body));
+      xhr.onload = () => {
+        switch (xhr.status) {
+          case 200:
+          case 201: resolve(xhr.response); break;
+          default: reject();
+        }
+      };
+      xhr.onerror = reject;
+    })
+  }
+
 }

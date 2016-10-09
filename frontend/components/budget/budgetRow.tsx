@@ -103,6 +103,39 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
           >
             Delete
           </a>
+          {(() => {
+            if(this.props.budgetItem.invoiced) {
+              return (
+                <p>
+                  <input
+                    type="checkbox"
+                    id={ `invoice${this.props.budgetItem.budgetItemId}` }
+                    checked="checked"
+                    disabled="disabled"
+                  />
+                  <label htmlFor={ `invoice${this.props.budgetItem.budgetItemId}` }>
+                    Invoiced on { moment(this.props.budgetItem.invoiced).local().format("MM/DD/YYYY") }
+                  </label>
+                </p>
+              );
+            } else {
+              return (
+                <p>
+                  <input
+                    type="checkbox"
+                    id={ `invoice${this.props.budgetItem.budgetItemId}` }
+                    onChange={(event) => {
+                      if ($(event.target).is(":checked")) this.props.addInvoiceItem();
+                      else this.props.removeInvoiceItem();
+                    }}
+                  />
+                  <label htmlFor={ `invoice${this.props.budgetItem.budgetItemId}` }>
+                    Invoice
+                  </label>
+                </p>
+              );
+            }
+          })()}
         </td>
       </tr>
     );

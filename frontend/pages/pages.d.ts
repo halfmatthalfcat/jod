@@ -37,6 +37,7 @@ interface IBudgetFilters {
 interface IBudgetState {
   budget?: IBudget;
   budgetItems?: Array<IBudgetItem>;
+  invoiceItems?: Array<IBudgetItem>;
   tagGroups?: Array<ITagGroup>;
   selectedHeader?: string;
   sortDirection?: string;

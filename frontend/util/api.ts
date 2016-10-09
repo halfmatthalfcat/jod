@@ -65,6 +65,18 @@ export namespace BudgetApi {
   export function getBudgetItems(budgetId: number): Promise<Array<IBudgetItem>> {
     return Ajax.get<Array<IBudgetItem>>(`/api/budget/${budgetId}/items`);
   }
+  export function generateBudget(budgetId: number, budgetItems: Array<IBudgetItem>): Promise<Blob> {
+    return Ajax.download<Array<IBudgetItem>>(
+      `/api/budget/${budgetId}/budget`,
+      budgetItems
+    );
+  }
+  export function generateInvoice(budgetId: number, budgetItems: Array<IBudgetItem>): Promise<Blob> {
+    return Ajax.download<Array<IBudgetItem>>(
+      `/api/budget/${budgetId}/invoice`,
+      budgetItems
+    );
+  }
 }
 
 export namespace BudgetItem {
