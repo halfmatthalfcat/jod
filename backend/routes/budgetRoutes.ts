@@ -1,8 +1,9 @@
 import {connection} from "../util/helpers";
 
 import {IPool} from "mysql";
-import {IBudgetItem, ITag} from "../../common/models/models";
+import {IBudgetItem, ITag, IUserInfo} from "../../common/models/models";
 import {Router} from "express";
+import {Pdf} from "../util/pdf";
 
 export namespace BudgetRoutes {
   const router = Router();
@@ -96,6 +97,47 @@ export namespace BudgetRoutes {
             }
           );
         });
+      });
+
+    router.route("/api/budget/:budgetId/invoice")
+      .post((req, res) => {
+        connection(db, res, (conn) => {
+          if (Array.isArray(req.body)) {
+            Promise.all(req.body.map((budgetItem: IBudgetItem) => {
+              return new Promise((resolve, reject) => {
+                conn.query(
+                  `
+                  UPDATE BudgetItem
+                  SET Invoiced = NOW()
+                  WHERE BudgetItemId = ? 
+                `,
+                  [budgetItem.budgetItemId],
+                  (err, result) => {
+                    if (err) reject(err);
+                    else resolve();
+                  }
+                )
+              });
+            })).then(() => {
+              conn.query(`
+                SELECT ui.*
+                FROM UserInfo as ui
+                JOIN Budget as b
+                ON ui.UserId = b.UserId
+                WHERE b.BudgetId = ?
+              `, [req.params.budgetId], (err, result2) => {
+                if (err) res.status(500).send(err);
+                else if (result2[0]) {
+                  const pdf = new Pdf(res, req.body as Array<IBudgetItem>);
+                  pdf
+                    .addUser(result2[0] as IUserInfo)
+                    .build();
+                }
+                else res.status(500).send("Unable to retrieve user from budget");
+              });
+            })
+          } else res.status(500).send("Invalid request payload");
+        })
       });
 
     router.route("/api/budget/:budgetId/items")

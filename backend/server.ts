@@ -12,6 +12,7 @@ import {UserInfoRoutes} from "./routes/userInfoRoutes";
 import {BudgetRoutes} from "./routes/budgetRoutes";
 import {BudgetItemRoutes} from "./routes/budgetItemRoutes";
 import {TagRoutes} from "./routes/tagRoutes";
+import {ImageRoutes} from "./routes/imageRoutes";
 import {Mailer} from "./util/mailer";
 
 class Server {
@@ -82,6 +83,7 @@ class Server {
       app.use(BudgetRoutes.routes(db));
       app.use(BudgetItemRoutes.routes(db));
       app.use(TagRoutes.routes(db));
+      app.use(ImageRoutes.routes(db));
 
       app.get("*", (req, res) => {
         res.sendFile(__dirname + "/public/index.html");

@@ -7,7 +7,9 @@
     "url": "joliverdecor.com"
   },
   "dependencies": {
+    "aws-sdk": "^2.6.7",
     "body-parser": "1.15.2",
+    "chart.js": "^2.3.0",
     "datatables.net": "^1.10.12",
     "express": "4.14.0",
     "jb-dropit": "^1.1.1",
@@ -18,6 +20,7 @@
     "moment-timezone": "^0.5.5",
     "mysql": "2.11.1",
     "nodemailer": "^2.6.0",
+    "pdfkit": "^0.8.0",
     "photoswipe": "^4.1.1",
     "pickadate": "^3.5.6",
     "react": "15.3.1",
