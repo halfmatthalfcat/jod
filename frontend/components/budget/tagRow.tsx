@@ -51,46 +51,6 @@ class TagRow extends React.Component<ITagRowProps, {}> {
                 );
               });
             })()}
-            <ul
-              className="chip"
-              id={ `menu${this.rand }` }
-              style={{ marginTop: 0 }}
-            >
-              <li>
-                <a href="#">Add Tag</a>
-                <ul>
-                  {(() => {
-                    return this.props.tagGroups.slice(0)
-                      .map((tagGroup) => {
-                        return update(tagGroup, {
-                          tags: {$set: tagGroup.tags.filter(this.tagActive.bind(this))}
-                        })
-                      })
-                      .reduce((acc, tagGroup) => {
-                        if (tagGroup.tags) {
-                          for(const tag of tagGroup.tags) {
-                            acc.push(
-                              <li
-                                key={ `tagRow${this.rand}tag${tag.tagId}` }
-                                style={{ backgroundColor: tag.tagColor, padding: "5px", cursor: "pointer" }}
-                                onClick={() => { this.props.addTagMap(tag); }}
-                              >
-                                <span
-                                  key={ `chip${this.rand}tag${tag.tagId}tagName` }
-                                  style={{ color: tag.tagTextColor }}
-                                >
-                                  { tag.tagName }
-                                </span>
-                              </li>
-                            );
-                          }
-                        }
-                        return acc;
-                    }, []);
-                  })()}
-                </ul>
-              </li>
-            </ul>
           </div>
         </td>
       </tr>

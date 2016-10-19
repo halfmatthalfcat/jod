@@ -19,7 +19,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
 
   public state: IBudgetState;
 
-  private budgetTitleStyle = {
+  private budgetTitleStyle: any = {
     display: "flex",
     justifyContent: "center",
     fontSize: "24px",
@@ -45,28 +45,28 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     return BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
       Tag.getAllTagGroups().then((tagGroups) => {
         this.setState({
-          budgetItems: this.applyTagFilter(budgetItems),
+          budgetItems: budgetItems,
           tagGroups: tagGroups
         });
       });
     });
   }
 
-  private applyTagFilter(budgetItems: Array<IBudgetItem>): Array<IBudgetItem> {
-    if(this.state.filters.tags.length > 0) {
-      return budgetItems.filter((budgetItem) => {
-        const r = budgetItem.tags
-          .map((t) => { return t.tagId; })
-          .reduce((acc, tagId) => {
-            if(this.state.filters.tags
-                .map((tg) => { return tg.tagId; })
-                .indexOf(tagId) === -1) return true;
-            else return acc;
-          }, false);
-        console.log(r);
-        return r;
-      });
-    } else return budgetItems;
+  private tagFilter(budgetItem: IBudgetItem): boolean {
+    if (this.state.filters.tags.length === 0) return true;
+    else if (budgetItem.tags) {
+      const itemTags = budgetItem.tags.map((tag) => { return tag.tagId; });
+      return this.state.filters.tags.reduce((acc, tag) => {
+        if(itemTags.indexOf(tag.tagId) !== -1) return true;
+        else return acc;
+      }, false);
+    } else return false;
+  }
+
+  private searchFilter(budgetItem: IBudgetItem): boolean {
+    if (this.props.searchText) {
+      return budgetItem.description.toLowerCase().includes(this.props.searchText.toLowerCase());
+    } else return true;
   }
 
   private handleHeader(name: string): void {
@@ -154,6 +154,16 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     });
   }
 
+  private updateItem(budgetItem: IBudgetItem): void {
+    BudgetItem.updateBudgetItem(budgetItem).then(() => {
+      this.resetBudget().then(() => {
+        this.setState({ focusedItem: null }, () => {
+          $(`#budgetItemModal${budgetItem.budgetItemId}`).closeModal();
+        });
+      });
+    });
+  }
+
   private deleteItem(budgetItem: IBudgetItem): void {
     BudgetItem.deleteBudgetItem(budgetItem.budgetItemId).then(() => {
       this.resetBudget();
@@ -186,11 +196,18 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     });
   }
 
+  private setBudgetFocus(budgetItem: IBudgetItem): void {
+    this.setState({ focusedItem: budgetItem }, () => {
+      console.log("Focused item");
+      $(`#budgetItemModal${budgetItem.budgetItemId}`).openModal();
+    });
+  }
+
   public render() {
     return (
       <div className="budgetWrapper" style={{ padding: "10px", display: "flex" }}>
         <div className="budgetTableWrapper" style={{ display: "flex", flexBasis: "100%" }}>
-          <table style={{ width: "100%" }}>
+          <table className="bordered" style={{ width: "100%" }}>
             <thead>
             <tr>
               <BudgetHeader
@@ -223,27 +240,33 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
             <tbody>
             {(() => {
               if (this.state.budgetItems) {
-                return this.state.budgetItems.reduce((acc, budgetItem) => {
-                  acc.push(
-                    <BudgetRow
-                      key={ `budgetRow${budgetItem.budgetItemId}` }
-                      budgetItem={ budgetItem }
-                      del={ this.deleteItem.bind(this, budgetItem) }
-                      addInvoiceItem={ this.addInvoiceItem.bind(this, budgetItem) }
-                      removeInvoiceItem={ this.removeInvoiceItem.bind(this, budgetItem) }
-                    />
-                  );
-                  acc.push(
-                    <TagRow
-                      key={ `tagRow${budgetItem.budgetItemId}` }
-                      budgetItemId={ budgetItem.budgetItemId }
-                      tags={ budgetItem.tags }
-                      tagGroups={ this.state.tagGroups }
-                      addTagMap={ this.addTagMap.bind(this, budgetItem) }
-                      delTagMap={ this.deleteTagMap.bind(this, budgetItem) }
-                    />
-                  );
-                  return acc;
+                return this.state.budgetItems
+                  .filter(this.searchFilter.bind(this))
+                  .filter(this.tagFilter.bind(this))
+                  .reduce((acc, budgetItem) => {
+                    acc.push(
+                      <BudgetRow
+                        key={ `budgetRow${budgetItem.budgetItemId}` }
+                        budgetItem={ budgetItem }
+                        del={ this.deleteItem.bind(this, budgetItem) }
+                        update={ this.setBudgetFocus.bind(this, budgetItem) }
+                        addInvoiceItem={ this.addInvoiceItem.bind(this, budgetItem) }
+                        removeInvoiceItem={ this.removeInvoiceItem.bind(this, budgetItem) }
+                      />
+                    );
+                    if(budgetItem.tags && budgetItem.tags.length > 0) {
+                      acc.push(
+                        <TagRow
+                          key={ `tagRow${budgetItem.budgetItemId}` }
+                          budgetItemId={ budgetItem.budgetItemId }
+                          tags={ budgetItem.tags }
+                          tagGroups={ this.state.tagGroups }
+                          addTagMap={ this.addTagMap.bind(this, budgetItem) }
+                          delTagMap={ this.deleteTagMap.bind(this, budgetItem) }
+                        />
+                      );
+                    }
+                    return acc;
                 }, []);
               }
             })()}
@@ -255,11 +278,6 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           generateBudget={ this.generateBudget.bind(this) }
           generateInvoice={ this.generateInvoice.bind(this) }
         />
-        <BudgetItemModal
-          tagGroups={ this.state.tagGroups }
-          budgetId={ this.props.params.budgetId }
-          addBudgetItem={ this.addItem.bind(this) }
-        />
         <SortModal
           tagGroups={ this.state.tagGroups }
           toggleFilter={ this.toggleTagFilter.bind(this) }
@@ -267,6 +285,13 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
         />
         <TagModal
           tagGroups={ this.state.tagGroups }
+        />
+        <BudgetItemModal
+          tagGroups={ this.state.tagGroups }
+          budgetId={ this.props.params.budgetId }
+          budgetItem={ this.state.focusedItem }
+          updateBudgetItem={ this.updateItem.bind(this) }
+          addBudgetItem={ this.addItem.bind(this) }
         />
       </div>
     );

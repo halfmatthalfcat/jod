@@ -103,7 +103,7 @@ class BudgetModal extends React.Component<IBudgetModalProps, IBudgetModalState> 
         </div>
         <div className="modal-footer">
           <a className="modal-action modal-close wave-effect btn-flat">Cancel</a>
-          <a className="modal-action wave-effect btn-flat" onClick={ this.sendBudget }>Save</a>
+          <a className="modal-action wave-effect btn-flat" onClick={ this.sendBudget.bind(this) }>Save</a>
         </div>
       </div>
     );

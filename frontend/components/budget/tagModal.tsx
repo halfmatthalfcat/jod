@@ -49,11 +49,13 @@ class TagModal extends React.Component<ITagModalProps, ITagModalState> {
   public componentWillReceiveProps(newProps: ITagModalProps): void {
     this.setState(update(this.state, {
       tagGroups: {$apply: (tgs: Array<ITagGroup>) => {
-        return newProps.tagGroups.filter((tagGroup) => {
-          return tgs
-            .map((tagGroup) => { return tagGroup.tagGroupId; })
-            .indexOf(tagGroup.tagGroupId) === -1
-        }).concat(this.state.tagGroups)
+        if (newProps.tagGroups) {
+          return newProps.tagGroups.filter((tagGroup) => {
+            return tgs
+                .map((tagGroup) => { return tagGroup.tagGroupId; })
+                .indexOf(tagGroup.tagGroupId) === -1
+          }).concat(this.state.tagGroups)
+        } else return this.state.tagGroups;
       }}
     }));
   }

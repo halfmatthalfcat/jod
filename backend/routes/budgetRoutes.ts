@@ -131,6 +131,7 @@ export namespace BudgetRoutes {
                   const pdf = new Pdf(res, req.body as Array<IBudgetItem>);
                   pdf
                     .addUser(result2[0] as IUserInfo)
+                    .setAsInvoice()
                     .build();
                 }
                 else res.status(500).send("Unable to retrieve user from budget");
@@ -156,6 +157,7 @@ export namespace BudgetRoutes {
                 const pdf = new Pdf(res, req.body as Array<IBudgetItem>);
                 pdf
                   .addUser(result2[0] as IUserInfo)
+                  .setAsBudget()
                   .build();
               }
               else res.status(500).send("Unable to retrieve user from budget");

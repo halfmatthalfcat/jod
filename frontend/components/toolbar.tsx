@@ -74,7 +74,9 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
   }
 
   private searchListen(event: Event): void {
-    this.setState({ searchText: $(event.target).val() })
+    this.setState({ searchText: $(event.target).val() }, () => {
+
+    })
   }
 
   private clearSearchOnRouteChange(): void {
@@ -137,7 +139,11 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
             />
           </div>
         </div>
-        { this.props.children }
+        {
+          this.props.children && React.cloneElement(this.props.children, {
+            searchText: this.state.searchText
+          })
+        }
       </div>
     );
   }

@@ -25,6 +25,7 @@ interface IUsersState {
 
 interface IBudgetProps {
   params: any;
+  searchText: string;
 }
 interface IBudgetFilters {
   tags?: Array<ITag>;
@@ -38,6 +39,7 @@ interface IBudgetState {
   budget?: IBudget;
   budgetItems?: Array<IBudgetItem>;
   invoiceItems?: Array<IBudgetItem>;
+  focusedItem?: IBudgetItem;
   tagGroups?: Array<ITagGroup>;
   selectedHeader?: string;
   sortDirection?: string;

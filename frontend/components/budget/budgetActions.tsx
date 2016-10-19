@@ -37,6 +37,9 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
                data-position="left"
                data-delay="50"
                data-tooltip="Budget"
+               onClick={(event) => {
+                 this.props.generateBudget(); event.stopPropagation();
+               }}
             >
               <i className="fa fa-money" />
             </a>
@@ -47,7 +50,7 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
                data-delay="50"
                data-tooltip="Invoice"
                onClick={(event) => {
-                 this.props.generateBudget(); event.stopPropagation();
+                 this.props.generateInvoice(); event.stopPropagation();
                }}
             >
               <i className="fa fa-dollar" />

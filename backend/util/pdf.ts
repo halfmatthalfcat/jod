@@ -41,12 +41,12 @@ class Pdf {
     return this;
   }
 
-  private setAsInvoice(): Pdf {
+  public setAsInvoice(): Pdf {
     this.budget = false;
     return this;
   }
 
-  private setAsBudget(): Pdf {
+  public setAsBudget(): Pdf {
     this.budget = true;
     return this;
   }

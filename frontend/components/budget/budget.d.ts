@@ -16,12 +16,13 @@ interface IBudgetModalState {
 }
 
 interface IBudgetRowState {
-  budgetItem: IBudgetItem;
+  budgetItem?: IBudgetItem;
 }
 
 interface IBudgetRowProps {
   budgetItem: IBudgetItem;
   del: () => void;
+  update: () => void;
   addInvoiceItem: () => void;
   removeInvoiceItem: () => void;
 }
@@ -60,15 +61,19 @@ interface IBudgetActionProps {
 
 interface IBudgetItemModalProps {
   budgetId: number;
+  budgetItem?: IBudgetItem;
   tagGroups: Array<ITagGroup>;
-  addBudgetItem: (budgetItem: IBudgetItem) => void;
+  addBudgetItem?: (budgetItem: IBudgetItem) => void;
+  updateBudgetItem?: (budgetItem: IBudgetItem) => void;
 }
 interface IBudgetItemModalState {
+  budgetItemId?: number;
   budgetId?: number;
   description?: string;
   created?: string;
   totalPrice?: number;
   notes?: string;
+  invoiced?: string;
   tags?: Array<ITag>
 }
 
