@@ -1,3 +1,4 @@
+import {IFloatingActionProps} from "./util";
 class FloatingAction extends React.Component<IFloatingActionProps, {}> {
 
   constructor(props: IFloatingActionProps) {

@@ -1,6 +1,6 @@
 import {IBudgetItemModalProps, IBudgetItemModalState} from "./budget";
 import {ITag, IBudgetItem} from "../../../common/models/models";
-const Sortable = require("sortablejs");
+import {StatefulTag} from "../util/statefulTag";
 const update = require("react-addons-update");
 const moment = require("moment-timezone");
 
@@ -8,62 +8,40 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
 
   public state: IBudgetItemModalState;
 
-  private cardStyle = {
-    display: "flex",
-    flexFlow: "row wrap",
-    padding: "10px",
-    height: "100%"
-  };
-
-  private cardHeader = {
-    flexBasis: "100%",
-    marginBottom: "10px",
-    height: "50px"
-  };
-
   constructor(props: IBudgetItemModalProps) {
     super(props);
-    if (props.budgetItem) {
-      this.state = {
-        budgetItemId: props.budgetItem.budgetItemId,
-        budgetId: props.budgetId,
-        description: props.budgetItem.description,
-        created: props.budgetItem.created,
-        totalPrice: props.budgetItem.totalPrice,
-        notes: props.budgetItem.notes,
-        invoiced: props.budgetItem.invoiced ? moment(props.budgetItem.invoiced).format("YYYY-MM-DD HH:mm:ss") : null,
-        tags: props.budgetItem.tags
-      }
-    } else {
-      this.state = { budgetId: props.budgetId, tags: [], notes: "", totalPrice: 0.00 };
-    }
+    this.state = {
+      budgetId: props.budgetId,
+      description: "",
+      created: new Date().toString(),
+      totalPrice: 0.00,
+      tags: [],
+      notes: ""
+    };
     this.clearState = this.clearState.bind(this);
     this.saveBudgetItem = this.saveBudgetItem.bind(this);
     this.clearDatePicker = this.clearDatePicker.bind(this);
+    this.getAllTags = this.getAllTags.bind(this);
+    this.getAppliedTags = this.getAppliedTags.bind(this);
+    this.tagActive = this.tagActive.bind(this);
   }
 
   public componentDidMount(): void {
-    const input = $(this.state.budgetItemId ? `#budgetItemDatePicker${this.state.budgetItemId}` : "#budgetItemDatePicker").pickadate({
+    $("#budgetItemDatePicker").pickadate({
       format: "mm/dd/yyyy",
       onSet: (change) => {
         this.setState({ created: moment(change.select).format("YYYY-MM-DD HH:mm:ss") });
       }
     });
-    if (this.props.budgetItem) {
-      const date = moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
-      const picker = input.pickadate("picker");
-      picker.set('select', [date.year(), date.month(), date.date()]);
-    }
-    Sortable.create(document.getElementById(this.state.budgetItemId ? `availableTags${this.state.budgetItemId}` : "availableTags"), {
-      animation: 150,
-      draggable: ".chip",
-      group: "tags"
-    });
-    Sortable.create(document.getElementById(this.state.budgetItemId ? `chosenTags${this.state.budgetItemId}` : "chosenTags"), {
-      animation: 150,
-      draggable: ".chip",
-      group: "tags"
-    });
+    // if (this.props.budgetItem) {
+    //   const date = moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
+    //   const picker = input.pickadate("picker");
+    //   picker.set('select', [date.year(), date.month(), date.date()]);
+    // }
+    Materialize.updateTextFields();
+  }
+
+  public componentDidUpdate(): void {
     Materialize.updateTextFields();
   }
 
@@ -75,47 +53,27 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
         created: nextProps.budgetItem.created,
         totalPrice: nextProps.budgetItem.totalPrice,
         notes: nextProps.budgetItem.notes,
-        invoiced: nextProps.budgetItem.invoiced ? nextProps.budgetItem.invoiced : null,
+        invoiced: nextProps.budgetItem.invoiced ? moment(nextProps.budgetItem.invoiced).format("YYYY-MM-DD HH:mm:ss") : null,
         tags: nextProps.budgetItem.tags
       }, () => {
-        const input = $(this.state.budgetItemId ? `#budgetItemDatePicker${this.state.budgetItemId}` : "#budgetItemDatePicker").pickadate({
-          format: "mm/dd/yyyy",
-          onSet: (change) => {
-            this.setState({ created: moment(change.select).format("YYYY-MM-DD HH:mm:ss") });
-          }
-        });
-        if (this.props.budgetItem) {
-          const date = moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
-          const picker = input.pickadate("picker");
-          picker.set('select', [date.year(), date.month(), date.date()]);
-        }
+        const date = moment(nextProps.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
+        $("#budgetItemDatePicker")
+          .pickadate("picker")
+          .set('select', [date.year(), date.month(), date.date()]);
       });
     } else {
-      this.state = { budgetId: nextProps.budgetId, tags: [], notes: "" };
+      this.setState({
+        budgetItemId: null,
+        budgetId: nextProps.budgetId,
+        description: "",
+        created: "",
+        totalPrice: 0.00,
+        tags: [],
+        notes: ""
+      }, () => {
+        this.clearDatePicker();
+      })
     }
-    Sortable.create(document.getElementById(this.state.budgetItemId ? `availableTags${this.state.budgetItemId}` : "availableTags"), {
-      animation: 150,
-      draggable: ".chip",
-      group: "tags",
-      onAdd: (event: any) => {
-        this.setState({
-          tags: this.state.tags.filter((t) =>
-            t.tagId !== (JSON.parse(event.item.id) as ITag).tagId
-          )
-        })
-      }
-    });
-    Sortable.create(document.getElementById(this.state.budgetItemId ? `chosenTags${this.state.budgetItemId}` : "chosenTags"), {
-      animation: 150,
-      draggable: ".chip",
-      group: "tags",
-      onAdd: (event: any) => {
-        this.setState(update(this.state, {
-          tags: {$push: [JSON.parse(event.item.id) as ITag]}
-        }));
-      }
-    });
-    Materialize.updateTextFields();
   }
 
   private saveBudgetItem(): void {
@@ -129,20 +87,56 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
   }
 
   private clearDatePicker(): void {
-    $(this.state.budgetItemId ? `#budgetItemDatePicker${this.state.budgetItemId}` : "#budgetItemDatePicker")
+    $("#budgetItemDatePicker")
       .pickadate("picker")
       .clear();
   }
 
-  private tagFilter(tag: ITag): boolean {
+  private tagActive(tag: ITag): boolean {
     return this.state.tags
       .map((tag) => { return tag.tagId; })
-      .indexOf(tag.tagId) === -1;
+      .indexOf(tag.tagId) !== -1;
   }
 
-  private clearState(func: () => void): void {
-    // TODO: This is ugly af
-    func();
+  private getAllTags(): Array<ITag> {
+    if(this.props.tagGroups) {
+      return this.props.tagGroups.reduce((acc, tagGroup) => {
+        return acc.concat(tagGroup.tags);
+      }, [])
+    } else return []
+  }
+
+  private getAppliedTags(): Array<ITag> {
+    if (this.props.tagGroups) {
+      return this.props.tagGroups.reduce((acc, tagGroup) => {
+        return acc.concat(tagGroup.tags.filter(this.tagActive))
+      }, [])
+    } else return []
+  }
+
+  private addTag(tag: ITag): void {
+    this.setState(update(this.state, {
+      tags: {$push: [tag]}
+    }), () => {
+      if(this.state.budgetItemId) {
+        this.props.addTagMap(this.state as IBudgetItem, tag);
+      }
+    });
+  }
+
+  private removeTag(tag: ITag): void {
+    this.setState(update(this.state, {
+      tags: {$set: this.state.tags.filter((t) => {
+        return t.tagId !== tag.tagId;
+      })}
+    }), () => {
+      if(this.state.budgetItemId) {
+        this.props.delTagMap(this.state as IBudgetItem, tag);
+      }
+    });
+  }
+
+  private clearState(): void {
     this.setState({
       budgetId: this.props.budgetId,
       tags: [],
@@ -158,7 +152,7 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
   public render() {
     return (
       <div
-        id={ this.state.budgetItemId ? `budgetItemModal${this.state.budgetItemId}` : "budgetItemModal"}
+        id="budgetItemModal"
         className="modal modal-fixed-footer"
       >
         <div className="modal-content">
@@ -168,15 +162,15 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
               <div className="row">
                 <div className="input-field col s4">
                   <input
-                    id={ this.state.budgetItemId ? `budgetItemDatePicker${this.state.budgetItemId}` : "budgetItemDatePicker"}
+                    id="budgetItemDatePicker"
                     type="date"
                     className="datepicker"
                   />
-                  <label htmlFor={ this.state.budgetItemId ? `budgetItemDatePicker${this.state.budgetItemId}` : "budgetItemDatePicker"}>date</label>
+                  <label htmlFor="budgetItemDatePicker">date</label>
                 </div>
                 <div className="input-field col s4">
                   <input
-                    id={ this.state.budgetItemId ? `budgetItemDescription${this.state.budgetItemId}` : "budgetItemDescription"}
+                    id="budgetItemDescription"
                     type="text"
                     className="validate"
                     pattern=".+"
@@ -187,11 +181,11 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
                       }
                     }}
                   />
-                  <label htmlFor={ this.state.budgetItemId ? `budgetItemDescription${this.state.budgetItemId}` : "budgetItemDescription"}>description</label>
+                  <label htmlFor="budgetItemDescription">description</label>
                 </div>
                 <div className="input-field col s4">
                   <input
-                    id={ this.state.budgetItemId ? `budgetItemTotalPrice${this.state.budgetItemId}` : "budgetItemTotalPrice"}
+                    id="budgetItemTotalPrice"
                     type="number"
                     step="0.01"
                     className="validate"
@@ -200,78 +194,36 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
                       this.setState({ totalPrice: $(event.target).val() });
                     }}
                   />
-                  <label htmlFor={ this.state.budgetItemId ? `budgetItemTotalPrice${this.state.budgetItemId}` : "budgetItemTotalPrice"}>total price</label>
+                  <label htmlFor="budgetItemTotalPrice">total price</label>
                 </div>
               </div>
               <div className="row">
                 <div className="input-field col s12">
                   <textarea
-                    id={ this.state.budgetItemId ? `budgetItemTextArea${this.state.budgetItemId}` : "budgetItemTextArea"}
+                    id="budgetItemTextArea"
                     className="materialize-textarea"
                     value={ this.state.notes }
                     onChange={(event) => {
                       this.setState({ notes: $(event.target).val() })
                     }}
                   />
-                  <label htmlFor={ this.state.budgetItemId ? `budgetItemTextArea${this.state.budgetItemId}` : "budgetItemTextArea"}>notes</label>
+                  <label htmlFor="budgetItemTextArea">notes</label>
                 </div>
               </div>
-              <div className="row" id={ this.state.budgetItemId ? `tagOptions${this.state.budgetItemId}` : "tagOptions"}>
-                <div className="col s6">
-                  <span>Available Tags</span>
+              <div className="row" id="tagOptions">
+                <div className="col s12">
+                  <span>Tags</span>
                   <div className="card" style={{ height: "200px" }}>
-                    <div className="card-content list-group" id={ this.state.budgetItemId ? `availableTags${this.state.budgetItemId}` : "availableTags"} style={this.cardStyle}>
+                    <div className="card-content">
                       {(() => {
-                        if(this.props.tagGroups){
-                          return this.props.tagGroups.reduce((acc, tagGroup) => {
-                            tagGroup.tags
-                              .filter(this.tagFilter.bind(this))
-                              .forEach((tag) => {
-                                acc.push(
-                                  <div
-                                    className="chip list-group-item"
-                                    style={{ backgroundColor: tag.tagColor }}
-                                    key={ `tag${tag.tagId}` }
-                                    id={ JSON.stringify(tag) }
-                                  >
-                                    <span
-                                      style={{ color: tag.tagTextColor }}
-                                    >
-                                      { tag.tagName }
-                                    </span>
-                                  </div>
-                                );
-                            });
-                            return acc;
-                          }, [])
-                        }
-                      })()}
-                    </div>
-                  </div>
-                </div>
-                <div className="col s6">
-                  <span>Chosen Tags</span>
-                  <div className="card" style={{ height: "200px" }}>
-                    <div className="card-content list-group" id={ this.state.budgetItemId ? `chosenTags${this.state.budgetItemId}` : "chosenTags"} style={this.cardStyle}>
-                      {(() => {
-                        if (this.state.tags.length > 0) {
-                          return this.state.tags.map((tag) => {
-                            return(
-                              <div
-                                className="chip list-group-item"
-                                style={{ backgroundColor: tag.tagColor }}
-                                key={ `tag${tag.tagId}` }
-                                id={ JSON.stringify(tag) }
-                              >
-                                <span
-                                  style={{ color: tag.tagTextColor }}
-                                >
-                                  { tag.tagName }
-                                </span>
-                              </div>
-                            );
-                          });
-                        }
+                        return this.getAllTags().map((tag) => {
+                          return <StatefulTag
+                            tag={tag}
+                            active={this.tagActive(tag)}
+                            activated={this.addTag.bind(this, tag)}
+                            deactivated={this.removeTag.bind(this, tag)}
+                          />
+                        });
                       })()}
                     </div>
                   </div>
@@ -285,8 +237,14 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
           <a
             className="modal-action wave-effect btn-flat"
             onClick={() => {
-              if(this.props.budgetItem) this.clearState(this.props.updateBudgetItem.bind(this.state as IBudgetItem));
-              else this.clearState(this.saveBudgetItem);
+              if(this.props.budgetItem) {
+                this.props.updateBudgetItem(this.state as IBudgetItem);
+                this.clearState();
+              }
+              else {
+               this.saveBudgetItem();
+               this.clearState();
+              }
             }}
           >
             Save

@@ -32,6 +32,7 @@ interface IBudgetHeaderProps {
   direction: string;
   selectedHeader: string;
   headerClicked: () => void;
+  width?: number;
 }
 
 interface ITagRowProps {
@@ -54,6 +55,7 @@ interface ITagModalState {
 }
 
 interface IBudgetActionProps {
+  newItem: () => void;
   resetBudget: () => void;
   generateBudget: () => void;
   generateInvoice: () => void;
@@ -65,6 +67,8 @@ interface IBudgetItemModalProps {
   tagGroups: Array<ITagGroup>;
   addBudgetItem?: (budgetItem: IBudgetItem) => void;
   updateBudgetItem?: (budgetItem: IBudgetItem) => void;
+  addTagMap?: (budgetItem: IBudgetItem, tag: ITag) => void;
+  delTagMap?: (budgetItem: IBudgetItem, tag: ITag) => void;
 }
 interface IBudgetItemModalState {
   budgetItemId?: number;
@@ -86,4 +90,12 @@ interface ISortModalProps {
 
 interface ISortModalState {
   tags?: Array<ITag>;
+}
+
+interface ISubTotalRowProps {
+  budgetItems?: Array<IBudgetItem>;
+}
+
+interface JQuery {
+  dropit(): JQuery;
 }

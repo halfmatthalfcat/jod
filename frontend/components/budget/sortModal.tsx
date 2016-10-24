@@ -21,7 +21,7 @@ class SortModal extends React.Component<ISortModalProps, {}> {
   private tagSelected(tag: ITag): boolean {
     return this.props.tagsFiltered
       .map((t) => { return t.tagId; })
-      .indexOf(tag.tagId) === -1;
+      .indexOf(tag.tagId) !== -1;
   }
 
   public render() {

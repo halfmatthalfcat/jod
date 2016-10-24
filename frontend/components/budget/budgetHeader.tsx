@@ -7,13 +7,19 @@ class BudgetHeader extends React.Component<IBudgetHeaderProps, {}> {
     marginLeft: "auto"
   };
 
+  private thStyle(width?: number): any {
+    return {
+      width: width ? `${width}%` : "100%"
+    }
+  }
+
   constructor(props: IBudgetHeaderProps) {
     super(props);
   }
 
   public render() {
     return (
-      <th data-field={ this.props.name }>
+      <th data-field={ this.props.name } style={this.thStyle(this.props.width)}>
         <div style={{ display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
           <span>{ this.props.name }</span>
           {(() => {

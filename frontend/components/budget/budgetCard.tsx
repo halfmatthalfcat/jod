@@ -12,8 +12,8 @@ class BudgetCard extends React.Component<IBudgetCardProps, {}> {
   public render() {
     return (
       <div className="card">
-        <Link to={`/budget/${this.props.budget.budgetId}`}>
-          <div className="card-content card-common" onClick={() => { location.href = `/budget/${this.props.budget.budgetId}` }}>
+        <Link to={`/admin/budget/${this.props.budget.budgetId}`}>
+          <div className="card-content card-common">
             <span className="card-title">{ this.props.budget.budgetName }</span><br />
             <span>Created { moment(this.props.budget.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().fromNow() }</span>
           </div>

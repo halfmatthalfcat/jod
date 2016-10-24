@@ -43,13 +43,19 @@ export namespace Ajax {
     return new Promise<T>((resolve, reject) => {
       $.get(
         `${url}${buildParams(params)}`
-      ).then((data, textStatus, jqXHR) => {
-        switch (jqXHR.status) {
-          case 200:
-          case 201: resolve(data as T); break;
-          default: reject(jqXHR);
+      ).then(
+        (data, textStatus, jqXHR) => {
+          switch (jqXHR.status) {
+            case 200:
+            case 201: resolve(data as T); break;
+            default: reject(jqXHR);
+          }
         }
-      });
+      ,
+        (jqXHR, textStatus, errorThrown) => {
+          reject(jqXHR);
+        }
+      );
     });
   }
 

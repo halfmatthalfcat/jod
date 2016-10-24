@@ -14,17 +14,16 @@ class AWSClient {
     this.bucket = bucket;
   }
 
-  public putImage(key: string, base64: string): Promise<{}> {
+  public putImage(key: string, image: string): Promise<string> {
     return new Promise((resolve, reject) => {
       this.s3.upload({
         Bucket: this.bucket,
-        Key: key,
-        Body: base64,
-        ContentType: "image/png",
-        ContentEncoding: "base64"
+        Key: `${key}.jpg`,
+        Body: new Buffer(image, "base64"),
+        ACL: "public-read"
       }, (err, data) => {
         if (err) reject(err);
-        else resolve();
+        else resolve(data.Location);
       })
     });
   }
@@ -42,3 +41,5 @@ class AWSClient {
   }
 
 }
+
+export {AWSClient};

@@ -21,6 +21,7 @@ class Admin extends React.Component<IAdminProps, IAdminState> {
     return (
       <div>
         Admin
+        { this.props.children }
       </div>
     );
   }

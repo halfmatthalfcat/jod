@@ -12,6 +12,7 @@ import {BudgetItemModal} from "../components/budget/budgetItemModal";
 import {SortModal} from "../components/budget/sortModal";
 import {TagModal} from "../components/budget/tagModal";
 import {saveAs} from "file-saver";
+import {SubTotalRow} from "../components/budget/subtotalRow";
 const moment = require("moment-timezone");
 const update = require("react-addons-update");
 
@@ -158,7 +159,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     BudgetItem.updateBudgetItem(budgetItem).then(() => {
       this.resetBudget().then(() => {
         this.setState({ focusedItem: null }, () => {
-          $(`#budgetItemModal${budgetItem.budgetItemId}`).closeModal();
+          $("#budgetItemModal").closeModal();
         });
       });
     });
@@ -196,42 +197,52 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
     });
   }
 
+  private unsetBudgetFocus(): void {
+    this.setState({ focusedItem: null }, () => {
+      $("#budgetItemModal").openModal();
+    });
+  }
+
   private setBudgetFocus(budgetItem: IBudgetItem): void {
     this.setState({ focusedItem: budgetItem }, () => {
-      console.log("Focused item");
-      $(`#budgetItemModal${budgetItem.budgetItemId}`).openModal();
+      $("#budgetItemModal").openModal();
     });
   }
 
   public render() {
     return (
-      <div className="budgetWrapper" style={{ padding: "10px", display: "flex" }}>
+      <div className="budgetWrapper" style={{ display: "flex" }}>
         <div className="budgetTableWrapper" style={{ display: "flex", flexBasis: "100%" }}>
           <table className="bordered" style={{ width: "100%" }}>
             <thead>
-            <tr>
+            <tr style={{ borderBottomColor: "#AB7345" }}>
               <BudgetHeader
                 name="date"
                 headerClicked={ this.handleHeader.bind(this, "date") }
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
+                width={10}
               />
               <BudgetHeader
                 name="description"
                 headerClicked={ this.handleHeader.bind(this, "description") }
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
+                width={60}
               />
               <BudgetHeader
                 name="totalPrice"
                 headerClicked={ this.handleHeader.bind(this, "totalPrice") }
                 selectedHeader={ this.state.selectedHeader }
                 direction={ this.state.sortDirection }
+                width={10}
               />
               {(() => {
                 if(this.state.budget) {
                   return (
-                    <td style={ this.budgetTitleStyle }>{ `${this.state.budget.budgetName} Budget` }</td>
+                    <th>
+                      <td style={ this.budgetTitleStyle }>{ `${this.state.budget.budgetName} Budget` }</td>
+                    </th>
                   );
                 }
               })()}
@@ -274,6 +285,7 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           </table>
         </div>
         <BudgetActions
+          newItem={ this.unsetBudgetFocus.bind(this) }
           resetBudget={ this.resetBudget.bind(this) }
           generateBudget={ this.generateBudget.bind(this) }
           generateInvoice={ this.generateInvoice.bind(this) }
@@ -292,6 +304,11 @@ class Budget extends React.Component<IBudgetProps, IBudgetState> {
           budgetItem={ this.state.focusedItem }
           updateBudgetItem={ this.updateItem.bind(this) }
           addBudgetItem={ this.addItem.bind(this) }
+          addTagMap={ this.addTagMap.bind(this) }
+          delTagMap={ this.deleteTagMap.bind(this) }
+        />
+        <SubTotalRow
+          budgetItems={ this.state.budgetItems }
         />
       </div>
     );

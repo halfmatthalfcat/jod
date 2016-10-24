@@ -9,6 +9,15 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
 
   public state: IBudgetRowState;
 
+  private rowStyle(hasTags: boolean): any {
+    if(hasTags) return {
+      borderBottomColor: "#AB7345"
+    };
+    else return {
+      borderBottom: 0
+    };
+  }
+
   private currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -28,14 +37,14 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
 
   public render() {
     return (
-      <tr>
+      <tr style={this.rowStyle(this.props.budgetItem.tags.length < 1)}>
         <td style={{ margin: 0, width: "10%" }}>
           <span>{ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").format("MM/DD/YYYY") }</span>
         </td>
         <td style={{ margin: 0, width: "60%" }}>
           <span>{ this.props.budgetItem.description }</span>
         </td>
-        <td style={{ display: "flex", alignItems: "baseline", paddingBottom: 0 }}>
+        <td style={{ margin: 0, width: "10%" }}>
           <span>{ this.currencyFormatter.format(this.props.budgetItem.totalPrice) }</span>
         </td>
         <td style={{ textAlign: "center", padding: 0, width: "20%" }}>

@@ -1,3 +1,5 @@
+import {ITag} from "../../../common/models/models";
+
 interface IEmptyCardProps {
   message: string;
   icon?: string;
@@ -8,6 +10,9 @@ interface IFloatingActionProps {
   clicked: () => void;
 }
 
-interface JQuery {
-  dropit(): JQuery;
+interface IStatefulTagProps {
+  tag: ITag;
+  active: boolean;
+  activated: () => void;
+  deactivated: () => void;
 }

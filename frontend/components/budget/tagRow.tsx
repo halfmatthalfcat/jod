@@ -1,8 +1,5 @@
 import {ITagRowProps} from "./budget";
-import {BudgetItem} from "../../util/api";
 import "materialize-css";
-const update = require("react-addons-update");
-import {ITag, ITagGroup} from "../../../common/models/models";
 
 class TagRow extends React.Component<ITagRowProps, {}> {
 
@@ -12,21 +9,11 @@ class TagRow extends React.Component<ITagRowProps, {}> {
     super(props);
   }
 
-  public componentDidMount(): void {
-    $(`#menu${this.rand}`).dropit();
-  }
-
-  private tagActive(tag: ITag): boolean {
-    return this.props.tags
-      .map((t) => { return t.tagId; })
-      .indexOf(tag.tagId) === -1;
-  }
-
   public render() {
     return(
-      <tr key={ `tagRow${this.rand}tr` }>
-        <td key={ `tagRow${this.rand}td` } colSpan="3" style={{ padding: 0 }}>
-          <div key={ `tagRow${this.rand}div` } style={{ maxHeight: "32px", display: "flex", marginTop: "10px" }}>
+      <tr key={ `tagRow${this.rand}tr` } style={{ borderBottomColor: "#AB7345" }}>
+        <td key={ `tagRow${this.rand}td` } colSpan="4" style={{ padding: 0 }}>
+          <div key={ `tagRow${this.rand}div` } style={{ maxHeight: "32px", display: "flex", margin: "5px" }}>
             {(() => {
               return this.props.tags.map((tag) => {
                 return(

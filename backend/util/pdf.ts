@@ -139,7 +139,7 @@ class Pdf {
         this.doc
           .font(this.OpenSans)
           .fontSize(14)
-          .text(moment(budgetItem.created).local().format("DD/MM/YYYY"), 50, height);
+          .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, height);
         this.doc
           .font(this.OpenSans)
           .fontSize(14)
@@ -153,7 +153,7 @@ class Pdf {
         this.doc
           .font(this.OpenSans)
           .fontSize(14)
-          .text(moment(budgetItem.created).local().format("DD/MM/YYYY"), 50, acc);
+          .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, acc);
         this.doc
           .font(this.OpenSans)
           .fontSize(14)

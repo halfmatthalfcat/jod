@@ -27,11 +27,9 @@ export interface IBudgetItem {
 }
 
 export interface IUser {
-
   email: string;
   username: string;
   userId?: number;
-
 }
 
 export interface IUserInfo {
@@ -62,4 +60,12 @@ export interface ITagGroup {
 export interface IFullUser {
   user: IUser;
   userInfo: IUserInfo;
+}
+
+export interface IImage {
+  imageId?: number;
+  key?: string;
+  s3Url?: string;
+  description?: string;
+  image?: string;
 }

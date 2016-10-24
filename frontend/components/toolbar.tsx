@@ -111,9 +111,10 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
                 if (this.state.user) {
                   return(
                     <ul className="right hide-on-med-and-down" style={{ display: "flex", flexShrink: 0 }}>
-                      <li style={{ marginRight: "15px" }}>Hi, { this.state.user.username }!</li>
-                      <li><Link to="/users">Users</Link></li>
-                      <li><Link to="/accounts">Accounts</Link></li>
+                      <li><Link to="/admin">Hi, { this.state.user.username }!</Link></li>
+                      <li><Link to="/admin/gallery">Gallery</Link></li>
+                      <li><Link to="/admin/users">Users</Link></li>
+                      <li><Link to="/admin/accounts">Accounts</Link></li>
                       <li><Link to="/logout">Logout</Link></li>
                     </ul>
                   );

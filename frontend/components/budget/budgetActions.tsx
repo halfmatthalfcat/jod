@@ -13,13 +13,25 @@ class BudgetActions extends React.Component<IBudgetActionProps, {}> {
         data-position="left"
         data-delay="50"
         data-tooltip="New Budget Item"
-        onClick={(event) => { $("#budgetItemModal").openModal(); event.stopPropagation(); }}
+        onClick={(event) => { this.props.newItem(); event.stopPropagation(); }}
         style={{ bottom: "45px", right: "24px" }}
       >
         <a className="btn-floating btn-large" style={{ backgroundColor: "#7094DE" }} >
           <i className="fa fa-plus fa-3x" />
         </a>
         <ul>
+          <li>
+            <a className="btn-floating tooltipped"
+               data-position="left"
+               data-delay="50"
+               data-tooltip="Info"
+               onClick={(event) => {
+                $("#subtotalModal").openModal(); event.stopPropagation();
+               }}
+            >
+              <i className="fa fa-info" />
+            </a>
+          </li>
           <li>
             <a className="btn-floating tooltipped"
                data-position="left"

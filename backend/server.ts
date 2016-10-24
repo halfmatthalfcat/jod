@@ -14,6 +14,7 @@ import {BudgetItemRoutes} from "./routes/budgetItemRoutes";
 import {TagRoutes} from "./routes/tagRoutes";
 import {ImageRoutes} from "./routes/imageRoutes";
 import {Mailer} from "./util/mailer";
+import {AWSClient} from "./util/awsClient";
 
 class Server {
 
@@ -73,7 +74,7 @@ class Server {
   private configRoutes(config: any, db: any): any {
     return new Promise((resolve, reject) => {
       const app = express();
-      app.use(BodyParser.json());
+      app.use(BodyParser.json({ limit: '50mb' }));
       app.use(express.static("public"));
       app.use(express.static("../node_modules"));
 
@@ -83,7 +84,7 @@ class Server {
       app.use(BudgetRoutes.routes(db));
       app.use(BudgetItemRoutes.routes(db));
       app.use(TagRoutes.routes(db));
-      app.use(ImageRoutes.routes(db));
+      app.use(ImageRoutes.routes(db, new AWSClient(config, "jodimages")));
 
       app.get("*", (req, res) => {
         res.sendFile(__dirname + "/public/index.html");

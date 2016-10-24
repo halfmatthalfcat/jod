@@ -1,3 +1,4 @@
+import {IEmptyCardProps} from "./util";
 class EmptyCard extends React.Component<IEmptyCardProps, {}> {
 
   constructor(props: IEmptyCardProps) {

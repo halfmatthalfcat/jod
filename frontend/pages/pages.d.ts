@@ -1,4 +1,4 @@
-import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag} from "../../common/models/models";
+import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag, IImage} from "../../common/models/models";
 
 interface IHomeProps {
 }
@@ -44,4 +44,12 @@ interface IBudgetState {
   selectedHeader?: string;
   sortDirection?: string;
   filters?: IBudgetFilters;
+}
+
+interface IGalleryProps {
+
+}
+interface IGalleryState {
+  focusedItem?: IImage
+  images?: Array<IImage>;
 }

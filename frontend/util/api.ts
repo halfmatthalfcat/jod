@@ -1,5 +1,5 @@
 import { Ajax } from "./helpers";
-import {IUser, IUserInfo, IBudget, IBudgetItem, ITag, IFullUser, ITagGroup} from "../../common/models/models";
+import {IUser, IUserInfo, IBudget, IBudgetItem, ITag, IFullUser, ITagGroup, IImage} from "../../common/models/models";
 
 export namespace App {
   export function requestLogin(email: string): Promise<boolean> {
@@ -7,6 +7,15 @@ export namespace App {
   }
   export function validate(token: string): Promise<IUser> {
     return Ajax.get<IUser>(`/validate/${token}`);
+  }
+}
+
+export namespace ImageApi {
+  export function getAll(): Promise<Array<IImage>> {
+    return Ajax.get<Array<IImage>>("/api/image");
+  }
+  export function addImage(image: IImage): Promise<IImage> {
+    return Ajax.post<any, IImage>("/api/image", image);
   }
 }
 
