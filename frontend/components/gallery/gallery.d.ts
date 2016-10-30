@@ -5,6 +5,7 @@ interface IImageCardProps {
   description?: string;
   edit?: () => void;
   del?: () => void;
+  reload: () => void;
 }
 
 interface IImageModalProps {

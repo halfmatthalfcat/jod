@@ -13,12 +13,24 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
     super(props);
     this.state = {};
     this.newImage = this.newImage.bind(this);
+    this.reloadMasonry = this.reloadMasonry.bind(this);
   }
 
   public componentDidMount(): void {
     ImageApi.getAll().then((images) => {
       this.setState({ images: images })
     });
+    $("#grid").masonry({
+      itemSelector: ".col",
+      columnWidth: ".col"
+    }).masonry("reloadItems").masonry();
+  }
+
+  private reloadMasonry(): void {
+    $("#grid").masonry({
+      itemSelector: ".col",
+      columnWidth: ".col"
+    }).masonry("reloadItems").masonry();
   }
 
   private newImage(image: IImage): void {
@@ -29,23 +41,51 @@ class Gallery extends React.Component<IGalleryProps, IGalleryState> {
     })
   }
 
+  private editImage(image: IImage): void {
+    ImageApi.editImage(image).then((newImage) => {
+      this.setState({
+        images: this.state.images.map((i) => {
+          if (i.imageId === newImage.imageId) return newImage;
+          else return i;
+        })
+      });
+    });
+  }
+
+  private deleteImage(image: IImage): void {
+    ImageApi.deleteImage(image.imageId).then(() => {
+      this.setState({
+        images: this.state.images.reduce((acc, i) => {
+          if (i.imageId !== image.imageId) acc.push(i);
+          return acc;
+        }, [])
+      })
+    })
+  }
+
   public render() {
     return (
-      <div>
-        {(() => {
-          if (this.state.images) {
-            return this.state.images.map((image) => {
-              console.log(image.s3Url);
-              return(
-                <ImageCard
-                  key={ image.imageId }
-                  imgUrl={ image.s3Url }
-                  description={ image.description }
-                />
-              )
-            })
-          }
-        })()}
+      <div className="container">
+        <div id="grid" className="row">
+          {(() => {
+            if (this.state.images) {
+              return this.state.images.map((image) => {
+                return (
+                  <div className="col s6 m4 l3">
+                    <ImageCard
+                      key={ image.imageId }
+                      imgUrl={ image.s3Url }
+                      description={ image.description }
+                      reload={ this.reloadMasonry }
+                      edit={ this.editImage.bind(this, image) }
+                      del={ this.deleteImage.bind(this, image) }
+                    />
+                  </div>
+                );
+              });
+            }
+          })()}
+        </div>
         <div
           className="fixed-action-btn tooltipped"
           data-position="left"

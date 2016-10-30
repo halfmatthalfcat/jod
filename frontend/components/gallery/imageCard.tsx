@@ -6,11 +6,15 @@ class ImageCard extends React.Component<IImageCardProps, {}> {
     super(props);
   }
 
+  public componentDidMount(): void {
+    $(".materialboxed").materialbox();
+  }
+
   public render() {
     return (
       <div className="card">
         <div className="card-image">
-          <img src={ this.props.imgUrl } />
+          <img onLoad={() => { this.props.reload() }} className="materialboxed" src={ this.props.imgUrl } />
         </div>
         {(() => {
           if (this.props.description) {

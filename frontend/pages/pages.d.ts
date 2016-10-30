@@ -3,6 +3,7 @@ import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag, IImage} from "../../co
 interface IHomeProps {
 }
 interface IHomeState {
+  images?: Array<IImage>;
 }
 
 interface IAdminProps {
@@ -50,6 +51,7 @@ interface IGalleryProps {
 
 }
 interface IGalleryState {
-  focusedItem?: IImage
+  focusedItem?: IImage;
   images?: Array<IImage>;
+  masonry?: JQuery;
 }

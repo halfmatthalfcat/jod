@@ -17,6 +17,12 @@ export namespace ImageApi {
   export function addImage(image: IImage): Promise<IImage> {
     return Ajax.post<any, IImage>("/api/image", image);
   }
+  export function editImage(image: IImage): Promise<IImage> {
+    return Ajax.put<IImage, IImage>("/api/image", image);
+  }
+  export function deleteImage(imageId: number): Promise<void> {
+    return Ajax.del(`/api/image/${imageId}`);
+  }
 }
 
 export namespace User {

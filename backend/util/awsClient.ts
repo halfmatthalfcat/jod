@@ -28,6 +28,18 @@ class AWSClient {
     });
   }
 
+  public deleteImage(key: string): Promise<{}> {
+    return new Promise((resolve, reject) => {
+      this.s3.deleteObject({
+        Bucket: this.bucket,
+        Key: `${key}.jpg`
+      }, (err, data) => {
+        if (err) reject();
+        else resolve();
+      })
+    })
+  }
+
   public getImage(key: string): Promise<string> {
     return new Promise((resolve, reject) => {
       this.s3.getObject({
