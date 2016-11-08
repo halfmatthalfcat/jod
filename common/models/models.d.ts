@@ -69,3 +69,9 @@ export interface IImage {
   description?: string;
   image?: string;
 }
+
+export interface IStatItem {
+  year: number;
+  month: number;
+  total: number;
+}

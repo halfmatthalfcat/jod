@@ -1,5 +1,8 @@
 import { Ajax } from "./helpers";
-import {IUser, IUserInfo, IBudget, IBudgetItem, ITag, IFullUser, ITagGroup, IImage} from "../../common/models/models";
+import {
+  IUser, IUserInfo, IBudget, IBudgetItem, ITag, IFullUser, ITagGroup, IImage,
+  IStatItem
+} from "../../common/models/models";
 
 export namespace App {
   export function requestLogin(email: string): Promise<boolean> {
@@ -142,5 +145,20 @@ export namespace Tag {
   }
   export function updateTagToTagGroup(tagGroupId: number, tagId: number): Promise<any> {
     return Ajax.put<any, any>(`/api/tag/group/${tagGroupId}/tag/${tagId}`, {});
+  }
+}
+
+export namespace Stats {
+  export function getBudgetStats(): Promise<Array<IStatItem>> {
+    return Ajax.get<Array<IStatItem>>("/api/stats/budget");
+  }
+  export function getInvoiceStats(): Promise<Array<IStatItem>> {
+    return Ajax.get<Array<IStatItem>>("/api/stats/invoice");
+  }
+  export function getUserBudgetStats(userId: number): Promise<Array<IStatItem>> {
+    return Ajax.get<Array<IStatItem>>(`/api/stats/budget/${userId}`);
+  }
+  export function getUserInvoiceStats(userId: number): Promise<Array<IStatItem>> {
+    return Ajax.get<Array<IStatItem>>(`/api/stats/invoice/${userId}`);
   }
 }

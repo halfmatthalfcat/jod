@@ -1,4 +1,5 @@
-import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag, IImage} from "../../common/models/models";
+import {IFullUser, IBudget, IBudgetItem, ITagGroup, ITag, IImage, IStatItem, IUser} from "../../common/models/models";
+import Chart from "chart.js";
 
 interface IHomeProps {
 }
@@ -9,6 +10,11 @@ interface IHomeState {
 interface IAdminProps {
 }
 interface IAdminState {
+  budgetStats?: Chart.LinearChartData;
+  invoiceStats?: Chart.LinearChartData;
+  userBudgetStats?: Chart.LinearChartData;
+  userInvoiceStats?: Chart.LinearChartData;
+  users?: Array<IUser>;
 }
 
 interface IAccountsProps {

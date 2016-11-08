@@ -13,6 +13,7 @@ import {BudgetRoutes} from "./routes/budgetRoutes";
 import {BudgetItemRoutes} from "./routes/budgetItemRoutes";
 import {TagRoutes} from "./routes/tagRoutes";
 import {ImageRoutes} from "./routes/imageRoutes";
+import {StatRoutes} from "./routes/statRoutes";
 import {Mailer} from "./util/mailer";
 import {AWSClient} from "./util/awsClient";
 
@@ -85,6 +86,7 @@ class Server {
       app.use(BudgetItemRoutes.routes(db));
       app.use(TagRoutes.routes(db));
       app.use(ImageRoutes.routes(db, new AWSClient(config, "jodimages")));
+      app.use(StatRoutes.routes(db));
 
       app.get("*", (req, res) => {
         res.sendFile(__dirname + "/public/index.html");
