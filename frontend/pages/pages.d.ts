@@ -18,12 +18,14 @@ interface IAdminState {
 }
 
 interface IAccountsProps {
+  searchText: string;
 }
 interface IAccountsState {
   users?: Array<[IFullUser, Array<IBudget>]>;
 }
 
 interface IUsersProps {
+  searchText: string;
 }
 interface IUsersState {
   users: Array<IFullUser>;

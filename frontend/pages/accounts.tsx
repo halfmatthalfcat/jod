@@ -18,6 +18,7 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
     this.state = {
       users: new Array<[IFullUser, Array<IBudget>]>()
     };
+    this.searchFilter = this.searchFilter.bind(this);
   }
 
   public componentDidMount() {
@@ -92,52 +93,65 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
     });
   }
 
+  private searchFilter(user: [IFullUser, Array<IBudget>]): boolean {
+    const [u, budgetArray] = user;
+    if (this.props.searchText) {
+      const lowerSearchText = this.props.searchText.toLowerCase();
+      return (
+        u.userInfo.lastName.toLowerCase().includes(lowerSearchText) ||
+        u.userInfo.firstName.toLowerCase().includes(lowerSearchText)
+      );
+    } else return true;
+  }
+
   public render() {
     console.log("Rendering accounts");
     return (
       <ul className="collapsible" data-collapsible="accordion" style={{ margin: "10px" }}>
         {(() => {
           if(this.state.users) {
-            return this.state.users.map((userBudget) => {
-              return (
-                <li>
-                  <div className="collapsible-header" style={{ backgroundColor: "#AB7345", color: "white" }}>
-                    <div style={{ display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
-                      <div>{ userBudget[0].userInfo.lastName }, { userBudget[0].userInfo.firstName }</div>
+            return this.state.users
+              .filter(this.searchFilter)
+              .map((userBudget) => {
+                return (
+                  <li>
+                    <div className="collapsible-header" style={{ backgroundColor: "#AB7345", color: "white" }}>
+                      <div style={{ display: "flex", flexFlow: "row nowrap", alignItems: "center" }}>
+                        <div>{ userBudget[0].userInfo.lastName }, { userBudget[0].userInfo.firstName }</div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="collapsible-body">
-                    {(() => {
-                      return chunk(userBudget[1], 6).map((elm) => {
-                        return (
-                          <div className="row">
-                            {(() => {
-                              return elm.map((budget) => {
-                                return (
-                                  <div className="col s2">
-                                    <BudgetCard
-                                      key={ `budget${budget.budgetId}` }
-                                      budget={ budget }
-                                      edit={ this.budgetModal.bind(this, budget) }
-                                      del={ this.deleteBudget.bind(this, budget) }
-                                    />
-                                    <BudgetModal
-                                      key={ `budgetModal${budget.budgetId}` }
-                                      budget={ budget }
-                                      users={this.state.users.map((userBudget) => { return userBudget[0]; })}
-                                      update={ this.upsertBudget.bind(this) }
-                                    />
-                                  </div>
-                                );
-                              });
-                            })()}
-                          </div>
-                        );
-                      });
-                    })()}
-                  </div>
-                </li>
-              );
+                    <div className="collapsible-body">
+                      {(() => {
+                        return chunk(userBudget[1], 6).map((elm) => {
+                          return (
+                            <div className="row">
+                              {(() => {
+                                return elm.map((budget) => {
+                                  return (
+                                    <div className="col s2">
+                                      <BudgetCard
+                                        key={ `budget${budget.budgetId}` }
+                                        budget={ budget }
+                                        edit={ this.budgetModal.bind(this, budget) }
+                                        del={ this.deleteBudget.bind(this, budget) }
+                                      />
+                                      <BudgetModal
+                                        key={ `budgetModal${budget.budgetId}` }
+                                        budget={ budget }
+                                        users={this.state.users.map((userBudget) => { return userBudget[0]; })}
+                                        update={ this.upsertBudget.bind(this) }
+                                      />
+                                    </div>
+                                  );
+                                });
+                              })()}
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  </li>
+                );
             });
           }
         })()}

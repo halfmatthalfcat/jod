@@ -45,3 +45,6 @@ This is my first big project with React and it has been awesome. Throughout the 
 I've found better best practices and slowly iterated on them (binding in render, stateless, etc) but overall, MV*
 has given me the ability to build out controllers and utilities as I see fit instead of already providing them to 
 me and having to adhere to more boilerplate as I've seen while using Angular.
+
+Before I started, I was very anti-JSX. I decided to give it a go and have actually been pleased at the results.
+Reduced a lot of code and the result is a very clean looking render function.

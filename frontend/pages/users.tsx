@@ -26,6 +26,7 @@ class Users extends React.Component<IUsersProps, IUsersState> {
         users: users
       });
     });
+    this.searchFilter = this.searchFilter.bind(this);
   }
 
   private userModal(user?: IFullUser): void {
@@ -73,34 +74,47 @@ class Users extends React.Component<IUsersProps, IUsersState> {
     });
   };
 
+  private searchFilter(user: IFullUser): boolean {
+    if (this.props.searchText) {
+      const lowerSearchText = this.props.searchText.toLowerCase();
+      return (
+        user.userInfo.lastName.toLowerCase().includes(lowerSearchText) ||
+        user.userInfo.firstName.toLowerCase().includes(lowerSearchText)
+      );
+    } else return true;
+  }
+
   public render() {
     return (
       <div>
         {(() => {
-          return chunk(this.state.users, 4).map((elm) => {
-            return (
-              <div className="row">
-                {(() => {
-                  return elm.map((user) => {
-                    return (
-                      <div className="col s3">
-                        <UserCard
-                          key={ `userCard${user.user.userId}` }
-                          user={user}
-                          edit={ this.userModal.bind(this, user) }
-                          del={ this.deleteUser.bind(this, user) }
-                        />
-                        <UserModal
-                          key={ `userModal${user.user.userId}` }
-                          user={user}
-                          update={ this.upsertUser.bind(this) }
-                        />
-                      </div>
-                    );
-                  });
-                })()}
-              </div>
-            );
+          return chunk(
+            this.state.users.filter(this.searchFilter),
+            4
+          ).map((elm) => {
+              return (
+                <div className="row">
+                  {(() => {
+                    return elm.map((user) => {
+                      return (
+                        <div className="col s3">
+                          <UserCard
+                            key={ `userCard${user.user.userId}` }
+                            user={user}
+                            edit={ this.userModal.bind(this, user) }
+                            del={ this.deleteUser.bind(this, user) }
+                          />
+                          <UserModal
+                            key={ `userModal${user.user.userId}` }
+                            user={user}
+                            update={ this.upsertUser.bind(this) }
+                          />
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+              );
           });
         })()}
         <UserModal key="userModal" update={ this.upsertUser.bind(this) } />
