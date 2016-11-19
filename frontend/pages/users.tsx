@@ -9,7 +9,7 @@ import {chunk} from "../util/helpers";
 import {FloatingAction} from "../components/util/floatingAction";
 const update = require("react-addons-update");
 
-class Users extends React.Component<IUsersProps, IUsersState> {
+class Users extends React.PureComponent<IUsersProps, IUsersState> {
 
   public state: IUsersState;
 
@@ -75,13 +75,17 @@ class Users extends React.Component<IUsersProps, IUsersState> {
   };
 
   private searchFilter(user: IFullUser): boolean {
-    if (this.props.searchText) {
+    if (
+      this.props.searchText &&
+      user.userInfo.firstName &&
+      user.userInfo.lastName
+    ) {
       const lowerSearchText = this.props.searchText.toLowerCase();
       return (
         user.userInfo.lastName.toLowerCase().includes(lowerSearchText) ||
         user.userInfo.firstName.toLowerCase().includes(lowerSearchText)
       );
-    } else return true;
+    } else if (!this.props.searchText) { return true; } else { return false; }
   }
 
   public render() {

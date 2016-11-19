@@ -5,7 +5,7 @@ import {ImageApi} from "../util/api";
 import {ImageCard} from "../components/gallery/imageCard";
 const update = require("react-addons-update");
 
-class Gallery extends React.Component<IGalleryProps, IGalleryState> {
+class Gallery extends React.PureComponent<IGalleryProps, IGalleryState> {
 
   public state: IGalleryState;
 

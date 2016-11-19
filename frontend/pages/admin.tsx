@@ -8,7 +8,7 @@ import {ChartCard} from "../components/admin/chartCard";
 import Chart from "chart.js";
 import {ChartCardWithSelect} from "../components/admin/chartCardWithSelect";
 
-class Admin extends React.Component<IAdminProps, IAdminState> {
+class Admin extends React.PureComponent<IAdminProps, IAdminState> {
 
   public state: IAdminState;
 

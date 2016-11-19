@@ -16,7 +16,7 @@ import {SubTotalRow} from "../components/budget/subtotalRow";
 const moment = require("moment-timezone");
 const update = require("react-addons-update");
 
-class Budget extends React.Component<IBudgetProps, IBudgetState> {
+class Budget extends React.PureComponent<IBudgetProps, IBudgetState> {
 
   public state: IBudgetState;
 

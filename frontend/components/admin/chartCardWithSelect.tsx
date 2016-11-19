@@ -14,6 +14,7 @@ class ChartCardWithSelect extends React.Component<IChartCardWithSelectProps, {}>
   }
 
   public componentDidMount(): void {
+    $(`#${this.props.title.replace(" ", "_")}_Select`).material_select();
     $(`#${this.props.title.replace(" ", "_")}_Select`).on("change", (event) => {
       this.props.setUser($(event.target).val());
     });
@@ -39,7 +40,7 @@ class ChartCardWithSelect extends React.Component<IChartCardWithSelectProps, {}>
   }
 
   public componentWillReceiveProps(newProps: IChartCardWithSelectProps): void {
-    $("select").material_select();
+    $(`#${this.props.title.replace(" ", "_")}_Select`).material_select();
     const chart = new Chart(
       (document.getElementById(`chart${this.props.title.replace(" ", "_")}`) as HTMLCanvasElement).getContext("2d"),
       {

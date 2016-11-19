@@ -9,7 +9,7 @@ import {BudgetCard} from "../components/budget/budgetCard";
 import {BudgetModal} from "../components/budget/budgetModal";
 import {FloatingAction} from "../components/util/floatingAction";
 
-class Accounts extends React.Component<IAccountsProps, IAccountsState> {
+class Accounts extends React.PureComponent<IAccountsProps, IAccountsState> {
 
   public state: IAccountsState;
 
@@ -95,13 +95,18 @@ class Accounts extends React.Component<IAccountsProps, IAccountsState> {
 
   private searchFilter(user: [IFullUser, Array<IBudget>]): boolean {
     const [u, budgetArray] = user;
-    if (this.props.searchText) {
+    if (
+      this.props.searchText &&
+      u.userInfo.lastName &&
+      u.userInfo.firstName
+    ) {
       const lowerSearchText = this.props.searchText.toLowerCase();
       return (
         u.userInfo.lastName.toLowerCase().includes(lowerSearchText) ||
         u.userInfo.firstName.toLowerCase().includes(lowerSearchText)
       );
-    } else return true;
+    } else if (!this.props.searchText) { return true; } else { return false; }
+
   }
 
   public render() {

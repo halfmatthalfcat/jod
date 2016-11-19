@@ -6,7 +6,7 @@ import {IHomeProps, IHomeState} from "./pages";
 import {ImageApi} from "../util/api";
 import {ImageCard} from "../components/gallery/imageCard";
 
-class Home extends React.Component<IHomeProps, IHomeState> {
+class Home extends React.PureComponent<IHomeProps, IHomeState> {
 
   public state: IHomeState;
 

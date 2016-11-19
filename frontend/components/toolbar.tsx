@@ -7,7 +7,7 @@ import {IToolbarProps, IToolbarState} from "./components";
 import {App} from "../util/api";
 import "materialize-css";
 
-class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
+class Toolbar extends React.PureComponent<IToolbarProps, IToolbarState> {
 
   public state: IToolbarState;
 
@@ -91,8 +91,8 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
           <nav style={{ backgroundColor: "#7094DE" }}>
             <div
               className="nav-wrapper"
-              onMouseEnter={() => {  this.setState({ showSearch: true, showLogin: false }); }}
-              onMouseLeave={() => {  this.setState({ showSearch: false, showLogin: false }); }}
+              onMouseEnter={() => {  this.setState({ showSearch: true }); }}
+              onMouseLeave={() => {  this.setState({ showSearch: false }); }}
               style={{ display: "flex", flexFlow: "row nowrap", justifyContent: "flex-end" }}
             >
               {(() => {
@@ -141,9 +141,11 @@ class Toolbar extends React.Component<IToolbarProps, IToolbarState> {
           </div>
         </div>
         {
-          this.props.children && React.cloneElement(this.props.children, {
-            searchText: this.state.searchText
-          })
+          React.Children.map(this.props.children,
+            (child) => React.cloneElement(child, {
+              searchText: this.state.searchText
+            })
+          )
         }
       </div>
     );
