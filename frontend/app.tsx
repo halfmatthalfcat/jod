@@ -16,6 +16,7 @@ import * as ReactDOM from "react-dom";
 import {Router, Route, IndexRoute, browserHistory} from "react-router";
 import {RouterState, RedirectFunction, Redirect} from "react-router";
 import {Gallery} from "./pages/gallery";
+import {Logout} from "./components/logout";
 
 const handleSecure = (nextState: RouterState, replace: RedirectFunction, callback: Function) => {
   App
@@ -33,6 +34,7 @@ $(document).ready(() => {
       <Route path="/" component={ Toolbar } routeListener={ browserHistory.listen }>
         <IndexRoute component={ Home }/>
         <Route path="login/:token" component={ Login } />
+        <Route path="logout" component={ Logout } />
         <Route path="admin" onEnter={ handleSecure } >
           <IndexRoute component={ Admin } />
           <Route path="gallery" component={ Gallery } />

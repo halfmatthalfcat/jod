@@ -26,6 +26,15 @@ class Toolbar extends React.PureComponent<IToolbarProps, IToolbarState> {
     };
   }
 
+  private infoContainerStyle: any = {
+    display: "flex",
+    backgroundColor: "#CED5DB",
+    flexFlow: "row nowrap",
+    alignItems: "center",
+    justifyContent: "center",
+    height: "30px"
+  };
+
   constructor(props: IToolbarProps) {
     super(props);
     this.state = {
@@ -96,7 +105,7 @@ class Toolbar extends React.PureComponent<IToolbarProps, IToolbarState> {
               style={{ display: "flex", flexFlow: "row nowrap", justifyContent: "flex-end" }}
             >
               {(() => {
-                if (this.state.showSearch || this.state.searchText) {
+                if ((this.state.showSearch || this.state.searchText) && this.state.user) {
                   return (
                     <div className="input-field middle" style={{ width: "100%", marginRight: "15px" }}>
                       <input id="search" type="search" onChange={ this.searchListen.bind(this) } required/>
@@ -139,6 +148,9 @@ class Toolbar extends React.PureComponent<IToolbarProps, IToolbarState> {
               style={{ textAlign: "center" }}
             />
           </div>
+        </div>
+        <div style={ this.infoContainerStyle }>
+          Servicing Illinois and Indiana | Contact julie@joliverdecor.com for a consultation
         </div>
         {
           React.Children.map(this.props.children,

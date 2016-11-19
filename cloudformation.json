@@ -1,0 +1,426 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CloudFormation template for JOliverDecor",
+  "Mappings": {
+    "AWSRegionToAMI": {
+      "ap-northeast-1": {
+        "AMIID": "ami-c8b016a9"
+      },
+      "ap-southeast-1": {
+        "AMIID": "ami-6d22840e"
+      },
+      "ap-southeast-2": {
+        "AMIID": "ami-73407d10"
+      },
+      "eu-central-1": {
+        "AMIID": "ami-dd12ebb2"
+      },
+      "eu-west-1": {
+        "AMIID": "ami-c8337dbb"
+      },
+      "us-east-1": {
+        "AMIID": "ami-1924770e"
+      },
+      "us-east-2": {
+        "AMIID": "ami-bd3e64d8"
+      },
+      "us-west-1": {
+        "AMIID": "ami-7f004b1f"
+      },
+      "us-west-2": {
+        "AMIID": "ami-56ed4936"
+      }
+    }
+  },
+  "Outputs": {
+    "ELBDNS": {
+      "Description": "Public DNS of the ELB",
+      "Value": {
+        "Fn::GetAtt": [
+          "CMElasticLoadBalancer",
+          "DNSName"
+        ]
+      }
+    }
+  },
+  "Parameters": {
+    "InstanceType": {
+      "AllowedValues": [
+        "t2.micro"
+      ],
+      "ConstraintDescription": "You can specify only t2.mirco.",
+      "Default": "t2.micro",
+      "Description": "The EC2 instance type",
+      "Type": "String"
+    },
+    "KeyName": {
+      "Description": "Name of an existing EC2 KeyPair to enable SSH access to the ECS instances.",
+      "Type": "AWS::EC2::KeyPair::KeyName"
+    },
+    "SSLCert": {
+      "Description": "SSL Cert",
+      "Type": "String"
+    }
+  },
+  "Resources": {
+    "JODECSCluster": {
+      "Type": "AWS::ECS::Cluster"
+    },
+    "JODVPC": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": "true",
+        "EnableDnsSupport": "true",
+        "EnableTenancy": "default"
+      }
+    },
+    "JODSubnet": {
+      "Type": "AWS::EC2::Subnet",
+      "DependsOn": [
+        "JODVPC"
+      ],
+      "Properties": {
+        "AvailabilityZone": "us-east-1",
+        "CidrBlock": "10.0.1.0/24",
+        "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODELBSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": [
+        "JODVPC"
+      ],
+      "Properties": {
+        "GroupDescription": "Security Group for the JOD ELB",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "80",
+            "ToPort": "80",
+            "IpProtocol": "tcp"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "81",
+            "ToPort": "81",
+            "IpProtocol": "tcp"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "80",
+            "ToPort": "80",
+            "IpProtocol": "tcp"
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "443",
+            "ToPort": "443",
+            "IpProtocol": "tcp"
+          }
+        ],
+        "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODElasticLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
+      "DependsOn": [
+        "JODELBSecurityGroup",
+        "JODSubnet"
+      ],
+      "Properties": {
+        "Scheme": "internet-facing",
+        "CrossZone": "true",
+        "ConnectionDrainingPolicy": {
+          "Enabled": "true",
+          "Timeout": "60"
+        },
+        "HealthCheck": {
+          "HealthyThreshold": "2",
+          "Interval": "30",
+          "Target": "HTTP:80",
+          "Timeout": "5",
+          "UnhealthyThreshold": "10"
+        },
+        "Listeners": [
+          {
+            "InstancePort": "80",
+            "LoadBalancerPort": "80",
+            "Protocol": "HTTP"
+          },
+          {
+            "InstancePort": "81",
+            "LoadBalancerPort": "443",
+            "Protocol": "HTTPS",
+            "SSLCertificateId": { "Ref": "SSLCert" }
+          }
+        ],
+        "SecurityGroups": [
+          { "Ref": "JODELBSecurityGroup" }
+        ],
+        "Subnets": [
+          { "Ref": "JODSubnet" }
+        ]
+      }
+    },
+    "JODAutoScalingLaunchConfiguration": {
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Metadata": {
+        "AWS::CloudFormation::Init": {
+          "config": {
+            "commands": {
+              "01_add_instance_to_cluster": {
+                "command": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "#!/bin/bash\n",
+                      "echo ECS_CLUSTER=",
+                      {
+                        "Ref": "JODECSCluster"
+                      },
+                      " >> /etc/ecs/ecs.config"
+                    ]
+                  ]
+                }
+              }
+            },
+            "files": {
+              "/etc/cfn/cfn-hup.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "[main]\n",
+                      "stack=",
+                      {
+                        "Ref": "AWS::StackId"
+                      },
+                      "\n",
+                      "region=",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "\n"
+                    ]
+                  ]
+                },
+                "group": "root",
+                "mode": "000400",
+                "owner": "root"
+              },
+              "/etc/cfn/hooks.d/cfn-auto-reloader.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "[cfn-auto-reloader-hook]\n",
+                      "triggers=post.update\n",
+                      "path=Resources.JODAutoScalingLaunchConfiguration.Metadata.AWS::CloudFormation::Init\n",
+                      "action=/opt/aws/bin/cfn-init -v ",
+                      "         --stack ",
+                      {
+                        "Ref": "AWS::StackName"
+                      },
+                      "         --resource JODAutoScalingLaunchConfiguration ",
+                      "         --region ",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "\n",
+                      "runas=root\n"
+                    ]
+                  ]
+                }
+              },
+              "/opt/nginx.conf": {
+                "content": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "worker_processes 1;\n",
+                      "user root;\n",
+                      "events {\n",
+                      "   worker_connections 1024;\n",
+                      "}\n",
+                      "http {\n",
+                      "   upstream backend {\n",
+                      "     server jod-server:8080;\n",
+                      "   }\n",
+                      "   server {\n",
+                      "     listen      80 proxy_protocol;\n",
+                      "     server_name joliverdecor.com www.joliverdecor.com;\n",
+                      "     location / {\n",
+                      "       return 301 https://$host$request_uri;\n",
+                      "     }\n",
+                      "   }\n",
+                      "   server {\n",
+                      "     listen              81 proxy_protocol;\n",
+                      "     real_ip_header      proxy_protocol;\n",
+                      "     server_name         joliverdecor.com www.joliverdecor.com;\n",
+                      "     proxy_buffering     off;\n",
+                      "     proxy_set_header    Host $host;\n",
+                      "     proxy_set_header    X-Real-IP $proxy_protocol_addr;\n",
+                      "     proxy_set_header    X-Forwarded-For $proxy_protocol_addr;\n",
+                      "     proxy_http_version  1.1;\n",
+                      "     location / {\n",
+                      "       proxy_pass http://backend;\n",
+                      "     }\n",
+                      "   }\n",
+                      "}\n"
+                    ]
+                  ]
+                }
+              }
+            },
+            "services": {
+              "sysvinit": {
+                "cfn-hup": {
+                  "enabled": "true",
+                  "ensureRunning": "true",
+                  "files": [
+                    "/etc/cfn/cfn-hup.conf",
+                    "/etc/cfn/hooks.d/cfn-auto-reloader.conf"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "Comment": "JOD server"
+      },
+      "Properties": {
+        "AssociatePublicIpAddress": "true",
+        "IamInstanceProfile": { "Ref": "EC2InstanceProfile" },
+        "ImageId": {
+          "Fn::FindInMap": [
+            "AWSRegionToAMI",
+            {
+              "Ref": "AWS::Region"
+            },
+            "AMIID"
+          ]
+        },
+        "InstanceType": { "Ref": "InstanceType" },
+        "KeyName": { "Ref": "KeyName" },
+        "SecurityGroups": [
+          { "Ref": "CMChatInstanceSecurityGroup" }
+        ],
+        "UserData": {
+          "Fn::Base64": {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash -xe\n",
+                "yum install -y aws-cfn-bootstrap\n",
+                "/opt/aws/bin/cfn-init -v ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                "         --resource JODAutoScalingLaunchConfiguration ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n",
+                "/opt/aws/bin/cfn-signal -e $? ",
+                "         --stack ",
+                {
+                  "Ref": "AWS::StackName"
+                },
+                "         --resource JODAutoScalingGroup ",
+                "         --region ",
+                {
+                  "Ref": "AWS::Region"
+                },
+                "\n"
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "JODAutoScalingGroup": {
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "DependsOn": [
+        "JODVPCGatewayAttachment",
+        "JODAutoScalingLaunchConfiguration",
+        "JODElasticLoadBalancer",
+        "JODSubnet"
+      ],
+      "CreationPolicy": {
+        "ResourceSignal": {
+          "Count": "1",
+          "Timeout": "PT15M"
+        }
+      },
+      "UpdatePolicy": {
+        "AutoScalingRollingUpdate": {
+          "MaxBatchSize": "1",
+          "MinInstancesInService": "1",
+          "PauseTime": "PT15M",
+          "WaitOnResourceSignals": "true"
+        }
+      },
+      "Properties": {
+        "DesiredCapacity": "2",
+        "LaunchConfigurationName": {
+          "Ref": "JODAutoScalingLaunchConfiguration"
+        },
+        "LoadBalancerNames": [
+          { "Ref": "JODElasticLoadBalancer" }
+        ],
+        "MaxSize": "4",
+        "MinSize": "2",
+        "VPCZoneIdentifier": [
+          { "Ref": "JODSubnet" }
+        ]
+      }
+    },
+    "JODECSService": {
+
+    },
+    "JODCPUAlarmHigh": {
+
+    },
+    "JODCPUAlarmLow": {
+
+    },
+    "JODScaleDownPolicy": {
+
+    },
+    "JODScaleUpPolicy": {
+
+    },
+    "JODSubnetRouteTable": {
+
+    },
+    "JODTaskDefinition": {
+
+    },
+    "JODInternetGateway": {
+
+    },
+    "JODVPCGatewayAttachment": {
+
+    },
+    "JODGatewayRoute": {
+
+    },
+    "JODVPCPublicRouteTable": {
+
+    },
+    "JODEC2InstanceProfile": {
+
+    },
+    "JODEC2Role": {
+
+    },
+    "JODECSServiceRole": {
+
+    }
+  }
+}
