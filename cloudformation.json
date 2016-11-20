@@ -66,6 +66,9 @@
     "JODECSCluster": {
       "Type": "AWS::ECS::Cluster"
     },
+    "JODInternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
     "JODVPC": {
       "Type": "AWS::EC2::VPC",
       "Properties": {
@@ -84,6 +87,45 @@
         "AvailabilityZone": "us-east-1",
         "CidrBlock": "10.0.1.0/24",
         "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODVPCGatewayAttachment": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "InternetGatewayId": { "Ref": "JODInternetGateway" },
+        "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODVPCPublicRouteTable": {
+      "Type": "AWS::EC2::RouteTable",
+      "DependsOn": [
+        "JODVPC"
+      ],
+      "Properties": {
+        "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODSubnetRouteTable": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "DependsOn": [
+        "JODVPCPublicRouteTable",
+        "JODSubnet"
+      ],
+      "Properties": {
+        "RouteTableId": { "Ref": "JODVPCPublicRouteTable" },
+        "SubnetId": { "Ref": "JODSubnet" }
+      }
+    },
+    "JODGatewayRoute": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": [
+        "JODInternetGateway",
+        "JODVPCPublicRouteTable"
+      ],
+      "Properties": {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": { "Ref": "JODInternetGateway" },
+        "RouteTableId": { "Ref": "JODVPCPublicRouteTable" }
       }
     },
     "JODELBSecurityGroup": {
@@ -124,6 +166,71 @@
         "VpcId": { "Ref": "JODVPC" }
       }
     },
+    "JODInstanceSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": [
+        "JODVPC",
+        "JODELBSecurityGroup"
+      ],
+      "Properties": {
+        "GroupDescription": "Security Group for ec2 instances",
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "-1",
+            "ToPort": "-1",
+            "IpProtocol": "-1"
+          }
+        ],
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "80",
+            "ToPort": "80",
+            "IpProtocol": "tcp",
+            "SourceSecurityGroupId": {
+              "Fn::GetAtt": [
+                "JODELBSecurityGroup",
+                "GroupId"
+              ]
+            }
+          },
+          {
+            "FromPort": "81",
+            "ToPort": "81",
+            "SourceSecurityGroupId": {
+              "Fn::GetAtt": [
+                "JODELBSecurityGroup",
+                "GroupId"
+              ]
+            }
+          },
+          {
+            "CidrIp": "0.0.0.0/0",
+            "FromPort": "22",
+            "ToPort": "22",
+            "IpProtocol": "tcp"
+          }
+        ],
+        "VpcId": { "Ref": "JODVPC" }
+      }
+    },
+    "JODRDSSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "DependsOn": [
+        "JODInstanceSecurityGroup"
+      ],
+      "Properties": {
+        "GroupDescription": "Security Group for rds instances",
+        "SecurityGroupIngress": [
+          {
+            "FromPort": "3306",
+            "ToPort": "3306",
+            "IpProtocol": "tcp",
+            "SourceSecurityGroupName": { "Ref": "JODInstanceSecurityGroup" }
+          }
+        ]
+      }
+    },
     "JODElasticLoadBalancer": {
       "Type": "AWS::ElasticLoadBalancing::LoadBalancer",
       "DependsOn": [
@@ -157,6 +264,34 @@
             "SSLCertificateId": { "Ref": "SSLCert" }
           }
         ],
+        "Policies": [
+          {
+            "Attributes": [
+              {
+                "Name": "ProxyProtocol",
+                "Value": "true"
+              }
+            ],
+            "InstancePorts": [
+              "81"
+            ],
+            "PolicyName": "EnableProxyProtocolSSL",
+            "PolicyType": "ProxyProtocolPolicyType"
+          },
+          {
+            "Attributes": [
+              {
+                "Name": "ProxyProtocol",
+                "Value": "true"
+              }
+            ],
+            "InstancePorts": [
+              "80"
+            ],
+            "PolicyName": "EnableProxyProtocolTCP",
+            "PolicyType": "ProxyProtocolPolicyType"
+          }
+        ],
         "SecurityGroups": [
           { "Ref": "JODELBSecurityGroup" }
         ],
@@ -167,6 +302,12 @@
     },
     "JODAutoScalingLaunchConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "DependsOn": [
+        "JODECSCluster",
+        "JODAutoScalingLaunchConfiguration",
+        "JODInstanceSecurityGroup",
+        "JODAutoScalingGroup"
+      ],
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "config": {
@@ -247,7 +388,7 @@
                       "}\n",
                       "http {\n",
                       "   upstream backend {\n",
-                      "     server jod-server:8080;\n",
+                      "     server jod-server:3000;\n",
                       "   }\n",
                       "   server {\n",
                       "     listen      80 proxy_protocol;\n",
@@ -306,7 +447,7 @@
         "InstanceType": { "Ref": "InstanceType" },
         "KeyName": { "Ref": "KeyName" },
         "SecurityGroups": [
-          { "Ref": "CMChatInstanceSecurityGroup" }
+          { "Ref": "JODInstanceSecurityGroup" }
         ],
         "UserData": {
           "Fn::Base64": {
@@ -381,46 +522,267 @@
       }
     },
     "JODECSService": {
-
+      "Type": "AWS::ECS::Service",
+      "DependsOn": [
+        "JODAutoScalingGroup"
+      ],
+      "Properties": {
+        "Cluster": { "Ref": "JODECSCluster" },
+        "DesiredCount": "2",
+        "DeploymentConfiguration": {
+          "MaximumPercent": "100",
+          "MinimumHealthyPercent": "0"
+        },
+        "LoadBalancers": [
+          {
+            "ContainerName": "nginx-proxy",
+            "ContainerPort": "80",
+            "LoadBalancerName": { "Ref": "JODElasticLoadBalancer" }
+          }
+        ],
+        "Role": { "Ref": "JODECSServiceRole" },
+        "TaskDefinition": { "Ref": "JODTaskDefinition" }
+      }
     },
     "JODCPUAlarmHigh": {
-
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-up if CPU > 90% for 10 minutes",
+        "AlarmActions": [
+          { "Ref": "JODScaleUpPolicy" }
+        ],
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": { "Ref": "JODAutoScalingGroup" }
+          }
+        ],
+        "EvaluationPeriods": "2",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Period": "300",
+        "Statistic": "Average",
+        "Threshold": "90"
+      }
     },
     "JODCPUAlarmLow": {
-
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "AlarmDescription": "Scale-down if CPU < 70% for 10 minutes",
+        "AlarmActions": [
+          { "Ref": "JODScaleDownPolicy" }
+        ],
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": { "Ref": "JODAutoScalingGroup" }
+          }
+        ],
+        "EvaluationPeriods": "2",
+        "MetricName": "CPUUtilization",
+        "Namespace": "AWS/EC2",
+        "Period": "300",
+        "Statistic": "Average",
+        "Threshold": "70"
+      }
     },
     "JODScaleDownPolicy": {
-
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "DependsOn": [
+        "JODAutoScalingGroup"
+      ],
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": { "Ref": "JODAutoScalingGroup" },
+        "Cooldown": "60",
+        "ScalingAdjustment": "-1"
+      }
     },
     "JODScaleUpPolicy": {
-
-    },
-    "JODSubnetRouteTable": {
-
+      "Type": "AWS::AutoScaling::ScalingPolicy",
+      "DependsOn": [
+        "JODAutoScalingGroup"
+      ],
+      "Properties": {
+        "AdjustmentType": "ChangeInCapacity",
+        "AutoScalingGroupName": { "Ref": "JODAutoScalingGroup" },
+        "Cooldown": "60",
+        "ScalingAdjustment": "1"
+      }
     },
     "JODTaskDefinition": {
-
-    },
-    "JODInternetGateway": {
-
-    },
-    "JODVPCGatewayAttachment": {
-
-    },
-    "JODGatewayRoute": {
-
-    },
-    "JODVPCPublicRouteTable": {
-
-    },
-    "JODEC2InstanceProfile": {
-
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "ContainerDefinitions": [
+          {
+            "Name": "jod-server",
+            "Image": "tbd",
+            "Essential": "true",
+            "Memory": "800",
+            "PortMappings": [
+              {
+                "ContainerPort": "3000",
+                "HostPort": "3000"
+              }
+            ]
+          },
+          {
+            "Name": "nginx-proxy",
+            "Image": "nginx:1.9.15",
+            "Essential": "true",
+            "Links": [
+              "jod-server"
+            ],
+            "Memory": "128",
+            "MountPoints": [
+              {
+                "ContainerPath": "/etc/nginx/nginx.conf",
+                "ReadOnly": "true",
+                "SourceVolume": "nginx-proxy-conf"
+              }
+            ],
+            "PortMappings": [
+              {
+                "ContainerPort": "80",
+                "HostPort": "80"
+              },
+              {
+                "ContainerPort": "81",
+                "HostPort": "81"
+              }
+            ]
+          }
+        ],
+        "Volumes": [
+          {
+            "Host": {
+              "SourcePath": "/opt/nginx.conf"
+            },
+            "Name": "nginx-proxy-conf"
+          }
+        ]
+      }
     },
     "JODEC2Role": {
-
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ec2.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "ecs-service",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "ec2:Describe*",
+                    "elasticloadbalancing:Describe*",
+                    "autoscaling:Describe*",
+                    "ecs:*",
+                    "ecr:*",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "JODEC2InstanceProfile": {
+      "Type": "AWS::IAM::InstanceProfile",
+      "DependsOn": [
+        "JODEC2Role"
+      ],
+      "Properties": {
+        "Path": "/",
+        "Roles": [
+          { "Ref": "JODEC2Role" }
+        ]
+      }
     },
     "JODECSServiceRole": {
-
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/",
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": [ "sts:AssumeRole" ],
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ecs.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "ecs-service",
+            "PolicyDocument": {
+              "Statement": [
+                {
+                  "Action": [
+                    "elasticloadbalancing:Describe*",
+                    "elasticloadbalancing:DeregisterInstancesFromLoadBalancer",
+                    "elasticloadbalancing:RegisterInstancesWithLoadBalancer",
+                    "ec2:Describe*",
+                    "ec2:AuthorizeSecurityGroupIngress"
+                  ],
+                  "Effect": "Allow",
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "JODRDS": {
+      "Type": "AWS::RDS::DBInstance",
+      "DependsOn": [
+        "JODRDSSecurityGroup"
+      ],
+      "DeletionPolicy": "Snapshot",
+      "Properties": {
+        "DBName": "JODMySQL",
+        "DBInstanceClass": "db.m1.small",
+        "AllocatedStorage": "5",
+        "Engine": "MySQL",
+        "EngineVersion": "5.7",
+        "MasterUsername": { "Ref": "DBUser" },
+        "MasterUserPassword": { "Ref": "DBPassword" },
+        "AvailabilityZone": "us-east-1",
+        "VPCSecurityGroups": [
+          {
+            "Fn::GetAtt": [
+              "JODRDSSecurityGroup",
+              "GroupId"
+            ]
+          }
+        ]
+      }
     }
   }
 }
