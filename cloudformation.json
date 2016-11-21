@@ -37,7 +37,7 @@
       "Description": "Public DNS of the ELB",
       "Value": {
         "Fn::GetAtt": [
-          "CMElasticLoadBalancer",
+          "JODElasticLoadBalancer",
           "DNSName"
         ]
       }
@@ -59,6 +59,14 @@
     },
     "SSLCert": {
       "Description": "SSL Cert",
+      "Type": "String"
+    },
+    "DBUser": {
+      "Description": "Master DB Username",
+      "Type": "String"
+    },
+    "DBPassword": {
+      "Description": "Master DB Password",
       "Type": "String"
     }
   },
@@ -302,12 +310,6 @@
     },
     "JODAutoScalingLaunchConfiguration": {
       "Type": "AWS::AutoScaling::LaunchConfiguration",
-      "DependsOn": [
-        "JODECSCluster",
-        "JODAutoScalingLaunchConfiguration",
-        "JODInstanceSecurityGroup",
-        "JODAutoScalingGroup"
-      ],
       "Metadata": {
         "AWS::CloudFormation::Init": {
           "config": {
@@ -434,7 +436,7 @@
       },
       "Properties": {
         "AssociatePublicIpAddress": "true",
-        "IamInstanceProfile": { "Ref": "EC2InstanceProfile" },
+        "IamInstanceProfile": { "Ref": "JODEC2InstanceProfile" },
         "ImageId": {
           "Fn::FindInMap": [
             "AWSRegionToAMI",
@@ -614,6 +616,9 @@
     },
     "JODTaskDefinition": {
       "Type": "AWS::ECS::TaskDefinition",
+      "DependsOn": [
+        "JODRDS"
+      ],
       "Properties": {
         "ContainerDefinitions": [
           {
@@ -625,6 +630,25 @@
               {
                 "ContainerPort": "3000",
                 "HostPort": "3000"
+              }
+            ],
+            "Environment": [
+              {
+                "Name": "MYSQL_HOST",
+                "Value": {
+                  "Fn::GetAtt": [
+                    "JODRDS",
+                    "Endpoint.Address"
+                  ]
+                }
+              },
+              {
+                "Name": "MYSQL_USER",
+                "Value": { "Ref": "DBUser" }
+              },
+              {
+                "Name": "MYSQL_PASS",
+                "Value": { "Ref": "DBPassword" }
               }
             ]
           },

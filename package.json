@@ -25,9 +25,9 @@
     "pdfkit": "^0.8.0",
     "photoswipe": "^4.1.1",
     "pickadate": "^3.5.6",
-    "react": "15.3.1",
+    "react": "^15.3.1",
     "react-addons-update": "^15.3.1",
-    "react-dom": "15.3.1",
+    "react-dom": "^15.3.1",
     "react-router": "^2.8.1",
     "react-sortablejs": "^1.1.1",
     "sortablejs": "^1.4.2"

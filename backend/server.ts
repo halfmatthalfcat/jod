@@ -53,10 +53,10 @@ class Server {
   private getDb(config: any): any {
     return new Promise((resolve, reject) => {
       const pool = MySQL.createPool({
-        host: config.mysql.host,
-        database: config.mysql.database,
-        user: config.mysql.username,
-        password: config.mysql.password,
+        host: process.env.MYSQL_HOST || config.mysql.host,
+        database: process.env.MYSQL_DB || config.mysql.database,
+        user: process.env.MYSQL_USER || config.mysql.username,
+        password: process.env.MYSQL_PASS || config.mysql.password,
         timezone: "utc"
       });
       pool.getConnection((err, conn) => {
