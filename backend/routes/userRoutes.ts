@@ -68,7 +68,7 @@ export namespace UserRoutes {
         connection(db, res, (conn) => {
           conn.query(
             `
-              SELECT * FROM User WHERE Active = 1
+              SELECT * FROM User
             `,
             (err, result) => {
               if (err) res.status(500).send(err);
@@ -107,8 +107,7 @@ export namespace UserRoutes {
             `
               SELECT  *
               FROM    User
-              WHERE   Active = 1 AND
-                      UserId = ?
+              WHERE   UserId = ?
             `,
             [req.params.userId],
             (err, result) => {
@@ -144,8 +143,7 @@ export namespace UserRoutes {
             `
               SELECT  *
               FROM    Budget
-              WHERE   Active = 1 AND
-                      UserId = ?
+              WHERE   UserId = ?
             `,
             [req.params.userId],
             (err, result) => {
