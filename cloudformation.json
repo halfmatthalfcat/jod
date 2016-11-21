@@ -68,6 +68,10 @@
     "DBPassword": {
       "Description": "Master DB Password",
       "Type": "String"
+    },
+    "DBHost": {
+      "Description": "DB Hostname",
+      "Type": "String"
     }
   },
   "Resources": {
@@ -83,7 +87,7 @@
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": "true",
         "EnableDnsSupport": "true",
-        "EnableTenancy": "default"
+        "InstanceTenancy": "default"
       }
     },
     "JODSubnet": {
@@ -92,7 +96,7 @@
         "JODVPC"
       ],
       "Properties": {
-        "AvailabilityZone": "us-east-1",
+        "AvailabilityZone": "us-east-1a",
         "CidrBlock": "10.0.1.0/24",
         "VpcId": { "Ref": "JODVPC" }
       }
@@ -205,6 +209,7 @@
           {
             "FromPort": "81",
             "ToPort": "81",
+            "IpProtocol": "tcp",
             "SourceSecurityGroupId": {
               "Fn::GetAtt": [
                 "JODELBSecurityGroup",
@@ -220,23 +225,6 @@
           }
         ],
         "VpcId": { "Ref": "JODVPC" }
-      }
-    },
-    "JODRDSSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "DependsOn": [
-        "JODInstanceSecurityGroup"
-      ],
-      "Properties": {
-        "GroupDescription": "Security Group for rds instances",
-        "SecurityGroupIngress": [
-          {
-            "FromPort": "3306",
-            "ToPort": "3306",
-            "IpProtocol": "tcp",
-            "SourceSecurityGroupName": { "Ref": "JODInstanceSecurityGroup" }
-          }
-        ]
       }
     },
     "JODElasticLoadBalancer": {
@@ -255,7 +243,7 @@
         "HealthCheck": {
           "HealthyThreshold": "2",
           "Interval": "30",
-          "Target": "HTTP:80",
+          "Target": "TCP:80",
           "Timeout": "5",
           "UnhealthyThreshold": "10"
         },
@@ -263,12 +251,12 @@
           {
             "InstancePort": "80",
             "LoadBalancerPort": "80",
-            "Protocol": "HTTP"
+            "Protocol": "TCP"
           },
           {
             "InstancePort": "81",
             "LoadBalancerPort": "443",
-            "Protocol": "HTTPS",
+            "Protocol": "SSL",
             "SSLCertificateId": { "Ref": "SSLCert" }
           }
         ],
@@ -616,14 +604,11 @@
     },
     "JODTaskDefinition": {
       "Type": "AWS::ECS::TaskDefinition",
-      "DependsOn": [
-        "JODRDS"
-      ],
       "Properties": {
         "ContainerDefinitions": [
           {
             "Name": "jod-server",
-            "Image": "tbd",
+            "Image": "245802995440.dkr.ecr.us-east-1.amazonaws.com/jod:latest",
             "Essential": "true",
             "Memory": "800",
             "PortMappings": [
@@ -635,12 +620,7 @@
             "Environment": [
               {
                 "Name": "MYSQL_HOST",
-                "Value": {
-                  "Fn::GetAtt": [
-                    "JODRDS",
-                    "Endpoint.Address"
-                  ]
-                }
+                "Value": { "Ref": "DBHost" }
               },
               {
                 "Name": "MYSQL_USER",
@@ -779,31 +759,6 @@
                 }
               ]
             }
-          }
-        ]
-      }
-    },
-    "JODRDS": {
-      "Type": "AWS::RDS::DBInstance",
-      "DependsOn": [
-        "JODRDSSecurityGroup"
-      ],
-      "DeletionPolicy": "Snapshot",
-      "Properties": {
-        "DBName": "JODMySQL",
-        "DBInstanceClass": "db.m1.small",
-        "AllocatedStorage": "5",
-        "Engine": "MySQL",
-        "EngineVersion": "5.7",
-        "MasterUsername": { "Ref": "DBUser" },
-        "MasterUserPassword": { "Ref": "DBPassword" },
-        "AvailabilityZone": "us-east-1",
-        "VPCSecurityGroups": [
-          {
-            "Fn::GetAtt": [
-              "JODRDSSecurityGroup",
-              "GroupId"
-            ]
           }
         ]
       }

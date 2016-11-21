@@ -57,7 +57,12 @@ class Server {
         database: process.env.MYSQL_DB || config.mysql.database,
         user: process.env.MYSQL_USER || config.mysql.username,
         password: process.env.MYSQL_PASS || config.mysql.password,
-        timezone: "utc"
+        timezone: "utc",
+        // http://stackoverflow.com/questions/35553432/error-handshake-inactivity-timeout-in-node-js-mysql-module
+        connectionLimit: 1000,
+        connectTimeout: 60 * 60 * 1000,
+        aquireTimeout: 60 * 60 * 1000,
+        timeout: 60 * 60 * 1000
       });
       pool.getConnection((err, conn) => {
         if (err) {
