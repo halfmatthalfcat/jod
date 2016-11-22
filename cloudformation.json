@@ -609,7 +609,7 @@
         "ContainerDefinitions": [
           {
             "Name": "jod-server",
-            "Image": "245802995440.dkr.ecr.us-east-1.amazonaws.com/jod:latest",
+            "Image": "245802995440.dkr.ecr.us-east-1.amazonaws.com/jod:0.0.1",
             "Essential": "true",
             "Memory": "800",
             "PortMappings": [
