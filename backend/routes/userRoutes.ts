@@ -81,7 +81,7 @@ export namespace UserRoutes {
     router.route("/api/user/all/full")
       .get((req, res) => {
         connection(db, res, (conn) => {
-          conn.query(`SELECT * FROM User WHERE Active = 1`, (err, result) => {
+          conn.query(`SELECT * FROM User`, (err, result) => {
             if (err) res.status(500).send(err);
             else Promise.all(result.map((user) => {
               return new Promise((resolve, reject) => {
