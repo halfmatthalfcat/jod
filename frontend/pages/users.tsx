@@ -88,12 +88,24 @@ class Users extends React.PureComponent<IUsersProps, IUsersState> {
     } else if (!this.props.searchText) { return true; } else { return false; }
   }
 
+  private sortByUser(user1: IFullUser, user2: IFullUser): number {
+    if (user1.userInfo.lastName) {
+      if (user2.userInfo.lastName) {
+        if (user1.userInfo.lastName > user2.userInfo.lastName) return 1;
+        else if (user1.userInfo.lastName < user2.userInfo.lastName) return -1;
+        else return 0;
+      } else return 1;
+    } else return -1;
+  }
+
   public render() {
     return (
       <div>
         {(() => {
           return chunk(
-            this.state.users.filter(this.searchFilter),
+            this.state.users
+              .filter(this.searchFilter)
+              .sort(this.sortByUser),
             4
           ).map((elm) => {
               return (

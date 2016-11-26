@@ -106,6 +106,22 @@ class Accounts extends React.PureComponent<IAccountsProps, IAccountsState> {
         u.userInfo.firstName.toLowerCase().includes(lowerSearchText)
       );
     } else if (!this.props.searchText) { return true; } else { return false; }
+  }
+
+  private removeEmpties(user: [IFullUser, Array<IBudget>]): boolean {
+    const [u, budgetArray] = user;
+    return u.userInfo.lastName ? true : false;
+  }
+
+  private sortByUser(user1: [IFullUser, Array<IBudget>], user2: [IFullUser, Array<IBudget>]): number {
+    const [u1, budgetArray] = user1;
+    const [u2, budgetArray2] = user2;
+
+    if (u1.userInfo && u1.userInfo.lastName && u2.userInfo && u2.userInfo.lastName) {
+      if(u1.userInfo.lastName > u2.userInfo.lastName) return 1;
+      else if (u1.userInfo.lastName < u2.userInfo.lastName) return -1;
+      else return 0;
+    } else return -1;
 
   }
 
@@ -116,7 +132,9 @@ class Accounts extends React.PureComponent<IAccountsProps, IAccountsState> {
         {(() => {
           if(this.state.users) {
             return this.state.users
+              .filter(this.removeEmpties)
               .filter(this.searchFilter)
+              .sort(this.sortByUser)
               .map((userBudget) => {
                 return (
                   <li>

@@ -36,7 +36,10 @@ class Budget extends React.PureComponent<IBudgetProps, IBudgetState> {
     BudgetApi.getBudget(this.props.params.budgetId).then((budget) => {
       BudgetApi.getBudgetItems(this.props.params.budgetId).then((budgetItems) => {
         Tag.getAllTagGroups().then((tagGroups) => {
-          this.setState({ budgetItems: budgetItems, tagGroups: tagGroups, budget: budget });
+          this.setState({
+            budgetItems: budgetItems,
+            tagGroups: tagGroups,
+            budget: budget });
         })
       });
     });
@@ -76,7 +79,7 @@ class Budget extends React.PureComponent<IBudgetProps, IBudgetState> {
       this.state.selectedHeader === name &&
       this.state.sortDirection === "desc"
     ) {
-      this.setState({ selectedHeader: null, sortDirection: null, budgetItems: this.budgetSort("date", "asc") });
+      this.setState({ selectedHeader: null, sortDirection: null, budgetItems: this.budgetSort("date", "desc") });
     } else if (
       this.state.selectedHeader &&
       this.state.selectedHeader === name &&
