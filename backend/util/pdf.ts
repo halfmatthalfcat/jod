@@ -134,34 +134,87 @@ class Pdf {
   private buildBudgetItems(): Pdf {
     const endY = this.budgetItems.reduce((acc, budgetItem) => {
       if(acc >= 700) {
-        const height = 50;
+        var height = 50;
         this.doc.addPage();
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, height);
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(budgetItem.description, 150, height);
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, height);
+        if (budgetItem.description.length > 30) {
+          const line1 = budgetItem.description.substring(
+            0, budgetItem.description.indexOf(" ", 30)
+          )
+          const line2 = budgetItem.description.substring(
+            budgetItem.description.indexOf(" ", 30)
+          )
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, height);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(line1, 150, height);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, height);
+          this.doc
+            .moveDown()
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(line2, 150, height + 20);
+          height = height + 20;
+        } else {
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, height);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(budgetItem.description, 150, height);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, height);
+        }
         return height;
       } else {
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, acc);
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(budgetItem.description, 150, acc);
-        this.doc
-          .font(this.OpenSans)
-          .fontSize(14)
-          .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, acc);
+        if (budgetItem.description.length > 30) {
+          const line1 = budgetItem.description.substring(
+            0, budgetItem.description.indexOf(" ", 30)
+          )
+          const line2 = budgetItem.description.substring(
+            budgetItem.description.indexOf(" ", 30)
+          )
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, acc);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(line1, 150, acc);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, acc);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(line2, 150, acc + 20);
+          acc = acc + 20;
+        } else {
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(moment(budgetItem.created).local().format("MM/DD/YYYY"), 50, acc);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(budgetItem.description, 150, acc);
+          this.doc
+            .font(this.OpenSans)
+            .fontSize(14)
+            .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, acc);
+        }
         return acc + 20;
       }
     }, 260);

@@ -109,7 +109,7 @@ export namespace BudgetRoutes {
                   `
                   UPDATE BudgetItem
                   SET Invoiced = NOW()
-                  WHERE BudgetItemId = ? 
+                  WHERE BudgetItemId = ?
                 `,
                   [budgetItem.budgetItemId],
                   (err, result) => {
@@ -159,8 +159,7 @@ export namespace BudgetRoutes {
                   .addUser(result2[0] as IUserInfo)
                   .setAsBudget()
                   .build();
-              }
-              else res.status(500).send("Unable to retrieve user from budget");
+              } else res.status(500).send("Unable to retrieve user from budget");
             });
           } else res.status(500).send("Invalid request payload");
         })
