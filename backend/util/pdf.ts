@@ -136,13 +136,10 @@ class Pdf {
       if(acc >= 700) {
         var height = 50;
         this.doc.addPage();
-        if (budgetItem.description.length > 30) {
-          const line1 = budgetItem.description.substring(
-            0, budgetItem.description.indexOf(" ", 30)
-          )
-          const line2 = budgetItem.description.substring(
-            budgetItem.description.indexOf(" ", 30)
-          )
+        if (budgetItem.description.length > 40) {
+          const extraLines = budgetItem.description.match(/.{0,40}(\s+|$)/mg);
+          extraLines.pop();
+          const firstLine = extraLines.shift();
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
@@ -150,17 +147,18 @@ class Pdf {
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
-            .text(line1, 150, height);
+            .text(firstLine, 150, height);
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
             .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, height);
-          this.doc
-            .moveDown()
-            .font(this.OpenSans)
-            .fontSize(14)
-            .text(line2, 150, height + 20);
-          height = height + 20;
+          for(let line of extraLines) {
+            height = height + 20
+            this.doc
+              .font(this.OpenSans)
+              .fontSize(14)
+              .text(line, 150, height);
+          }
         } else {
           this.doc
             .font(this.OpenSans)
@@ -175,15 +173,12 @@ class Pdf {
             .fontSize(14)
             .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, height);
         }
-        return height;
+        return height + 20;
       } else {
-        if (budgetItem.description.length > 30) {
-          const line1 = budgetItem.description.substring(
-            0, budgetItem.description.indexOf(" ", 30)
-          )
-          const line2 = budgetItem.description.substring(
-            budgetItem.description.indexOf(" ", 30)
-          )
+        if (budgetItem.description.length > 40) {
+          const extraLines = budgetItem.description.match(/.{0,40}(\s+|$)/mg);
+          extraLines.pop();
+          const firstLine = extraLines.shift();
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
@@ -191,16 +186,18 @@ class Pdf {
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
-            .text(line1, 150, acc);
+            .text(firstLine, 150, acc);
           this.doc
             .font(this.OpenSans)
             .fontSize(14)
             .text(this.currencyFormatter.format(budgetItem.totalPrice), 450, acc);
-          this.doc
-            .font(this.OpenSans)
-            .fontSize(14)
-            .text(line2, 150, acc + 20);
-          acc = acc + 20;
+          for(let line of extraLines) {
+            acc = acc + 20
+            this.doc
+              .font(this.OpenSans)
+              .fontSize(14)
+              .text(line, 150, acc);
+          }
         } else {
           this.doc
             .font(this.OpenSans)
