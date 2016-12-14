@@ -36,7 +36,7 @@ class Home extends React.PureComponent<IHomeProps, IHomeState> {
             if (this.state.images) {
               return this.state.images.map((image) => {
                 return (
-                  <div className="col s6 m4 l3">
+                  <div className="col s6 m4 l3" key={ `div${image.imageId}` }>
                     <ImageCard
                       key={ image.imageId }
                       imgUrl={ image.s3Url }

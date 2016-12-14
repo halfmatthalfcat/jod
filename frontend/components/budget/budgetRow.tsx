@@ -39,7 +39,7 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
     return (
       <tr style={this.rowStyle(this.props.budgetItem.tags.length < 1)}>
         <td style={{ margin: 0, width: "10%" }}>
-          <span>{ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").format("MM/DD/YYYY") }</span>
+          <span>{ moment().utc(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().format("MM/DD/YYYY") }</span>
         </td>
         <td style={{ margin: 0, width: "60%" }}>
           <span>{ this.props.budgetItem.description }</span>

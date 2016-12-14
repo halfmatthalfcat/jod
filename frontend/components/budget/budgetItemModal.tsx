@@ -33,11 +33,12 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
         this.setState({ created: moment(change.select).format("YYYY-MM-DD HH:mm:ss") });
       }
     });
-    // if (this.props.budgetItem) {
-    //   const date = moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
-    //   const picker = input.pickadate("picker");
-    //   picker.set('select', [date.year(), date.month(), date.date()]);
-    // }
+    if (this.props.budgetItem) {
+      const date = moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ");
+      $("#budgetItemDatePicker")
+        .pickadate("picker")
+        .set('select', [date.year(), date.month(), date.date()]);
+    }
     Materialize.updateTextFields();
   }
 
