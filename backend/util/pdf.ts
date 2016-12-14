@@ -55,15 +55,15 @@ class Pdf {
     this.doc
       .font(this.Pacifico)
       .fontSize(36)
-      .text("JOliverDecor", 95, 70);
-    this.doc
-      .font(this.OpenSans)
-      .fontSize(28)
-      .text("|", 315, 85);
+      .text("JOliverDecor", 105, 70);
     this.doc
       .font(this.OpenSans)
       .fontSize(24)
-      .text("Interior Design", 335, 90);
+      .text("Interior Design", 325, 90);
+    this.doc
+      .font(this.OpenSans)
+      .fontSize(10)
+      .text("14297 Matt Street, Carmel, IN 46033 | 317-714-8967 | allboyz4@indy.rr.com", 135, 120);
     return this;
   }
 
