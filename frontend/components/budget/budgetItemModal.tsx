@@ -30,7 +30,9 @@ class BudgetItemModal extends React.Component<IBudgetItemModalProps, IBudgetItem
     $("#budgetItemDatePicker").pickadate({
       format: "mm/dd/yyyy",
       onSet: (change) => {
-        this.setState({ created: moment(change.select).format("YYYY-MM-DD HH:mm:ss") });
+        this.setState({ created: moment(change.select).format("YYYY-MM-DD HH:mm:ss") }, () => {
+          Materialize.updateTextFields();
+        });
       }
     });
     if (this.props.budgetItem) {

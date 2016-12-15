@@ -26,7 +26,6 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
 
   constructor(props: IBudgetRowProps) {
     super(props);
-    console.log(`Rendering ${props.budgetItem.budgetItemId}`);
     this.state = { budgetItem: update(props.budgetItem, {
       invoiced: {$apply: (invoiceDate: string) => {
         if(invoiceDate) return moment(invoiceDate).format("YYYY-MM-DD HH:MM:ss");
@@ -39,7 +38,7 @@ class BudgetRow extends React.Component<IBudgetRowProps, IBudgetRowState> {
     return (
       <tr style={this.rowStyle(this.props.budgetItem.tags.length < 1)}>
         <td style={{ margin: 0, width: "10%" }}>
-          <span>{ moment().utc(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").local().format("MM/DD/YYYY") }</span>
+          <span>{ moment(this.props.budgetItem.created, "YYYY-MM-DD'T'HH:mm:ssSSSZ").utc().format("MM/DD/YYYY") }</span>
         </td>
         <td style={{ margin: 0, width: "60%" }}>
           <span>{ this.props.budgetItem.description }</span>
