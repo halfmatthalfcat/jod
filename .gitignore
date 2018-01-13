@@ -8,3 +8,5 @@ typings
 config.json
 out
 dump.sql
+
+package-lock.json
